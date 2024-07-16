@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@googlemaps/markerclusterer": "^2.5.3",
+    "@radix-ui/react-alert-dialog": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@react-google-maps/api": "^2.19.3",
+    "@vis.gl/react-google-maps": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.408.0",
