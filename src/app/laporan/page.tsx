@@ -13,7 +13,7 @@ export default function Page() {
 
       <div>
         <form action="" className="flex w-full gap-5 mt-10">
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-[0.65rem] w-full">
             <div className="flex flex-col gap-3">
               <label htmlFor="nama">Nama</label>
               <Input type="text" placeholder="Masukkan nama anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
@@ -24,17 +24,17 @@ export default function Page() {
             </div>
             <div className="flex flex-col gap-3">
               <label htmlFor="nama">Telepon</label>
-              <Input type="text" placeholder="Masukkan nama anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+              <Input type="text" placeholder="Masukkan nomor telepon anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
             </div>
             <div className="flex flex-col gap-3">
-              <label htmlFor="nama">Nama</label>
-              <Input type="text" placeholder="Masukkan nama anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+              <label htmlFor="nama">Lokasi</label>
+              <Input type="text" placeholder="Masukkan lokasi blank spot" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
             </div>
           </div>
           <div className="w-full h-full">
             <div className="flex flex-col gap-3">
               <label htmlFor="keterangan">Keterangan</label>
-              <Textarea placeholder="Masukkan keterangan" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+              <Textarea placeholder="Masukkan keterangan" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" rows={14} />
             </div>
           </div>
         </form>
