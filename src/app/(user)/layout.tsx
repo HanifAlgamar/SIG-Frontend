@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import React from 'react';
 import Navbar from '../../components/shared/navbar'
+import Footer from '@/components/shared/footer';
 
 export const metadata: Metadata = {
   title: 'SIG - Lokasi Menara Telekomunikasi',
@@ -16,6 +17,7 @@ export default function RootLayout({
     <main>
       <Navbar />
       {children}
+      <Footer/>
     </main>
   );
 }

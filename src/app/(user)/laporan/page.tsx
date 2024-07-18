@@ -5,7 +5,7 @@ import { Textarea } from '../../../components/ui/textarea';
 
 export default function Page() {
   return (
-    <div className="pt-28 layout">
+    <div className="pt-28 layout min-h-screen">
       <div className="text-center">
         <h1 className="font-bold text-2xl">Laporan Lokasi Blank Spot</h1>
         <h2>Lengkapi data berikut untuk melaporkan lokasi atau daerah blank spot</h2>

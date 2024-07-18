@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { AlignRight } from 'lucide-react';
+import { AlignRight, Instagram, Facebook, Globe } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
@@ -32,15 +32,25 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
-            <Button variant="default" className="bg-[#002E5B] md:hidden w-max hover:bg-[#002e5b] hover:bg-opacity-90 rounded-full text-white px-8">
-              <Link href={'/login'}>Login</Link>
-            </Button>
           </ul>
         </div>
-        <div className="max-md:hidden">
-          <Button variant="default" className="bg-[#002E5B] hover:bg-[#002e5b] hover:bg-opacity-90 rounded-full text-white px-8">
-            <Link href={'/login'}>Login</Link>
-          </Button>
+
+        <div className="flex gap-4 items-center">
+          <div className="px-1.5 py-1 hover:bg-[#002E5B] cursor-pointer hover:text-white transition-all duration-200 rounded-full border border-black">
+            <Link href={'/'} className="">
+              <Instagram className="w-5" />
+            </Link>
+          </div>
+          <div className="px-1.5 py-1 hover:bg-[#002E5B]  cursor-pointer hover:text-white transition-all rounded-full border border-black">
+            <Link href={'/'}>
+              <Facebook className="w-5" />
+            </Link>
+          </div>
+          <div className="px-1.5 py-1 hover:bg-[#002E5B]  cursor-pointer hover:text-white transition-all rounded-full border border-black">
+            <Link href={'/'}>
+              <Globe className="w-5" />
+            </Link>
+          </div>
         </div>
 
         <div className="cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)}>
