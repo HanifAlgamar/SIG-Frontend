@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Input } from '../../components/ui/input';
-import { Textarea } from '../../components/ui/textarea';
+import { Input } from '../../../components/ui/input';
+import { Textarea } from '../../../components/ui/textarea';
 
 export default function Page() {
   return (
@@ -23,11 +23,11 @@ export default function Page() {
               <Input type="text" placeholder="Masukkan email anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
             </div>
             <div className="flex flex-col gap-3">
-              <label htmlFor="nama">Telepon</label>
+              <label htmlFor="telepon">Telepon</label>
               <Input type="text" placeholder="Masukkan nomor telepon anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
             </div>
             <div className="flex flex-col gap-3">
-              <label htmlFor="nama">Lokasi</label>
+              <label htmlFor="lokasi">Lokasi</label>
               <Input type="text" placeholder="Masukkan lokasi blank spot" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
             </div>
           </div>
