@@ -27,19 +27,19 @@ export default function Navbar() {
           <ul className="flex gap-2 items-center max-md:flex-col max-md:gap-10">
             {links.map(({ link, label, path }, index) => (
               <li key={index}>
-                <Link href={link} className={`hover:bg-[#002E5B] hover:text-white px-6 rounded-full py-2 transition-all duration-200 ${pathname === label || pathname === path  ? 'bg-[#002E5B] text-white' : ''}`}>
+                <Link href={link} className={`hover:bg-[#002E5B] hover:text-white px-6 rounded-full py-2 transition-all duration-200 ${pathname === label || pathname === path ? ' text-white bg-[#002E5B]' : ''}`}>
                   {label}
                 </Link>
               </li>
             ))}
             <Button variant="default" className="bg-[#002E5B] md:hidden w-max hover:bg-[#002e5b] hover:bg-opacity-90 rounded-full text-white px-8">
-              Login
+              <Link href={'/login'}>Login</Link>
             </Button>
           </ul>
         </div>
         <div className="max-md:hidden">
           <Button variant="default" className="bg-[#002E5B] hover:bg-[#002e5b] hover:bg-opacity-90 rounded-full text-white px-8">
-            Login
+            <Link href={'/login'}>Login</Link>
           </Button>
         </div>
 
@@ -54,17 +54,17 @@ export default function Navbar() {
 const links = [
   {
     link: '/',
-    path:'/',
+    path: '/',
     label: 'Beranda',
   },
   {
     link: '/laporan',
-    path:'/laporan',
+    path: '/laporan',
     label: 'Laporan',
   },
   {
     link: '/about',
-    path:'/about',
+    path: '/about',
     label: 'About',
   },
 ];
