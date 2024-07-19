@@ -12,8 +12,8 @@ export default function Page() {
       </div>
 
       <div>
-        <form action="" className="flex w-full gap-5 mt-10">
-          <div className="flex flex-col gap-[0.65rem] w-full">
+        <form action="" className="flex md:flex-row flex-col w-full gap-5 my-10">
+          <div className="flex flex-col gap-[0.55rem] w-full">
             <div className="flex flex-col gap-3">
               <label htmlFor="nama">Nama</label>
               <Input type="text" placeholder="Masukkan nama anda" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
@@ -30,11 +30,15 @@ export default function Page() {
               <label htmlFor="lokasi">Lokasi</label>
               <Input type="text" placeholder="Masukkan lokasi blank spot" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
             </div>
+            <div className="flex flex-col gap-3">
+              <label htmlFor="operator">Operator</label>
+              <Input type="text" placeholder="Masukkan nama operator (XL, Telkomsel, dll)" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+            </div>
           </div>
           <div className="w-full h-full">
             <div className="flex flex-col gap-3">
               <label htmlFor="keterangan">Keterangan</label>
-              <Textarea placeholder="Masukkan keterangan" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" rows={14} />
+              <Textarea placeholder="Masukkan keterangan" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" rows={18} />
             </div>
           </div>
         </form>

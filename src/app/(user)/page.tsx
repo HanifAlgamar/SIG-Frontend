@@ -4,55 +4,81 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '../../components/ui/input';
 import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { PoiMarkers } from '@/components/shared/poimarker';
-import { locations } from '../dummydata/data';
 
 export default function Home() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
 
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/data')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
+
+  console.log(data)
+
   return (
-    <main className="">
+    <main className="min-h-screen">
       <div>
         <div className="text-center pt-28">
           <h1 className="text-2xl font-bold">Sistem Informasi Geografis (SIG)</h1>
           <h2>Lokasi Menara Telekomunikasi di Provinsi Nusa Tenggara Barat</h2>
         </div>
 
-        <section className="max-w-7xl mx-auto flex border shadow-md my-10 rounded-md">
-          <div className="border-r p-4 text-center">
-            <h3 className="font-bold text-xl">Informasi Statistik</h3>
-            <div className="border text-white bg-blue-700 rounded-md p-4 mt-4 text-center">
-              <p>Jumlah BTS</p>
-              <p className="font-bold text-xl">{locations.length}</p>
+        <div className='mx-4'>
+          <section className="max-w-7xl mx-auto flex flex-col md:flex-row border shadow-md my-10 rounded-md">
+            <div className="border-r p-4 text-center md:w-1/4">
+              <h3 className="font-bold text-xl">Informasi Statistik</h3>
+              <div className="border text-white bg-blue-700 rounded-md p-4 mt-4 text-center">
+                <p>Jumlah BTS</p>
+                <p className="font-bold text-xl">{data.length}</p>
+              </div>
+              <div className="border text-white bg-orange-500 rounded-md p-4 mt-4 text-center">
+                <p>Lokasi Blankspot</p>
+                <p className="font-bold text-xl">0</p>
+              </div>
             </div>
-            <div className="border text-white bg-orange-500 rounded-md p-4 mt-4 text-center">
-              <p>Lokasi Blankspot</p>
-              <p className="font-bold text-xl">0</p>
+            <div className="flex flex-col items-center justify-center md:w-3/4 w-full">
+              <div className="w-full">
+                <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
+                  <Map
+                    defaultZoom={13}
+                    defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
+                    onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
+                    mapId="semidi2"
+                    style={{ width: '100%', height: '500px' }}
+                  >
+                    <PoiMarkers pois={data} />
+                    <AdvancedMarker ref={markerRef} position={null} />
+                  </Map>
+                  <MapControl position={ControlPosition.TOP}>
+                    <div className="autocomplete-control mt-6">
+                      <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+                    </div>
+                  </MapControl>
+                  <MapHandler place={selectedPlace} marker={marker} />
+                </APIProvider>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center justify-center ">
-            <div className="w-full">
-              <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
-                <Map
-                  defaultZoom={13}
-                  defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
-                  onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
-                  mapId="semidi2"
-                  style={{ width: '1069px', height: '500px' }}
-                >
-                  <PoiMarkers pois={locations} />
-                  <AdvancedMarker ref={markerRef} position={null} />
-                </Map>
-                <MapControl position={ControlPosition.TOP}>
-                  <div className="autocomplete-control mt-6">
-                    <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
-                  </div>
-                </MapControl>
-                <MapHandler place={selectedPlace} marker={marker} />
-              </APIProvider>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
+
       </div>
     </main>
   );

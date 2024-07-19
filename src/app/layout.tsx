@@ -22,7 +22,6 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         {children}
-        <iframe style={{ width: '400px', maxHeight: '600px' }} className="hidden" src="https://app.fastbots.ai/embed/clyicd9lg0017nibc5df3rzjn"></iframe>
       </body>
     </html>
   );
