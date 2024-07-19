@@ -17,7 +17,6 @@ export default function RootLayout({
     <main>
       <Navbar />
       {children}
-      <iframe style={{ width: '400px', maxHeight: '600px' }} className="hidden" src="https://app.fastbots.ai/embed/clyicd9lg0017nibc5df3rzjn"></iframe>
       <Footer/>
     </main>
   );

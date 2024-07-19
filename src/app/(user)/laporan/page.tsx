@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   return (
@@ -12,7 +13,8 @@ export default function Page() {
       </div>
 
       <div>
-        <form action="" className="flex md:flex-row flex-col w-full gap-5 my-10">
+        <form action="" >
+          <div className="flex md:flex-row flex-col w-full gap-5 my-10">
           <div className="flex flex-col gap-[0.55rem] w-full">
             <div className="flex flex-col gap-3">
               <label htmlFor="nama">Nama</label>
@@ -40,6 +42,11 @@ export default function Page() {
               <label htmlFor="keterangan">Keterangan</label>
               <Textarea placeholder="Masukkan keterangan" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" rows={18} />
             </div>
+          </div>
+          </div>
+
+          <div>
+            <Button className='w-full bg-[#002E5B] hover:bg-[#1a4167]'>Kirim</Button>
           </div>
         </form>
       </div>
