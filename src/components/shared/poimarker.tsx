@@ -1,4 +1,3 @@
-// import { Poi } from '../../app/dummydata/data';
 import { useState } from 'react';
 import { AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
 
@@ -19,9 +18,9 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
 
   return (
     <>
-      {props.pois.map((poi: Poi) => (
+      {props.pois.map((poi: Poi, index) => (
         <AdvancedMarker
-          key={poi.key}
+          key={index}
           position={{ lat: parseFloat(poi.latitude), lng: parseFloat(poi.longitude) }}
           onClick={() => setSelectedPoi(poi)}
         >
