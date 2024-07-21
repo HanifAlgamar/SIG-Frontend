@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '../../components/ui/input';
 import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
-import { PoiMarkers } from '@/components/shared/poimarker';
+import { BlankSpotMarkers, PoiMarkersMenara } from '@/components/shared/poimarker';
 import PieChart from '@/components/shared/piechart';
 
 export default function Home() {
@@ -31,6 +31,44 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
+
+  const dummyBlankSpots = [
+    {
+      id: 'bs001',
+      lokasi: 'Desa Sekotong Barat, Kabupaten Lombok Barat',
+      operator: 'XL, Telkomsel',
+      latitude: '-8.7544',
+      longitude: '115.9894',
+    },
+    {
+      id: 'bs002',
+      lokasi: 'Desa Batu Layar, Kabupaten Lombok Barat',
+      operator: 'Indosat, Telkomsel',
+      latitude: '-8.5650',
+      longitude: '116.0498',
+    },
+    {
+      id: 'bs003',
+      lokasi: 'Desa Pemenang Barat, Kabupaten Lombok Utara',
+      operator: 'XL, Indosat',
+      latitude: '-8.4059',
+      longitude: '116.0696',
+    },
+    {
+      id: 'bs004',
+      lokasi: 'Desa Jeringo, Kabupaten Lombok Timur',
+      operator: 'Telkomsel, Indosat',
+      latitude: '-8.6834',
+      longitude: '116.5249',
+    },
+    {
+      id: 'bs005',
+      lokasi: 'Desa Plampang, Kabupaten Sumbawa',
+      operator: 'XL, Telkomsel',
+      latitude: '-8.8079',
+      longitude: '117.7863',
+    },
+  ];
 
   return (
     <main className="min-h-screen">
@@ -66,7 +104,8 @@ export default function Home() {
                     mapId="semidi2"
                     style={{ width: '100%', height: '600px' }}
                   >
-                    <PoiMarkers pois={data} />
+                    <PoiMarkersMenara pois={data} />
+                    <BlankSpotMarkers blankSpots={dummyBlankSpots} />
                     <AdvancedMarker ref={markerRef} position={null} />
                   </Map>
                   <MapControl position={ControlPosition.TOP}>
