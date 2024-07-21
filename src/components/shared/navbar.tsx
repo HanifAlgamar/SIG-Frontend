@@ -73,8 +73,8 @@ const links = [
     label: 'Laporan',
   },
   {
-    link: '/tentang',
-    path: '/tentang',
-    label: 'Tentang Kami',
+    link: '/about',
+    path: '/about',
+    label: 'About',
   },
 ];

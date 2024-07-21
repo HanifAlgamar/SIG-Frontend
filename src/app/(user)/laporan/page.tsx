@@ -46,7 +46,7 @@ export default function Page() {
           </div>
 
           <div>
-            <Button className='w-full bg-[#002E5B] hover:bg-[#1a4167]'>Kirim</Button>
+            <Button className='w-full bg-[#002E5B] hover:bg-[#1a4167] mt-2 mb-10' type='submit'>Kirim</Button>
           </div>
         </form>
       </div>

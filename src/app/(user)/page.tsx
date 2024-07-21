@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '../../components/ui/input';
 import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { PoiMarkers } from '@/components/shared/poimarker';
+import PieChart from '@/components/shared/piechart';
 
 export default function Home() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
@@ -15,23 +16,21 @@ export default function Home() {
 
   useEffect(() => {
     fetch('http://localhost:5000/api/data')
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         setData(data);
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error);
         setLoading(false);
       });
   }, []);
-
-  console.log(data)
 
   return (
     <main className="min-h-screen">
@@ -41,7 +40,7 @@ export default function Home() {
           <h2>Lokasi Menara Telekomunikasi di Provinsi Nusa Tenggara Barat</h2>
         </div>
 
-        <div className='mx-4'>
+        <div className="mx-4">
           <section className="max-w-7xl mx-auto flex flex-col md:flex-row border shadow-md my-10 rounded-md">
             <div className="border-r p-4 text-center md:w-1/4">
               <h3 className="font-bold text-xl">Informasi Statistik</h3>
@@ -51,7 +50,10 @@ export default function Home() {
               </div>
               <div className="border text-white bg-orange-500 rounded-md p-4 mt-4 text-center">
                 <p>Lokasi Blankspot</p>
-                <p className="font-bold text-xl">0</p>
+                <p className="font-bold text-xl">5</p>
+              </div>
+              <div className="mt-6 flex justify-center">
+                <PieChart jumlahBTS={data.length} lokasiBlankspot={5} />
               </div>
             </div>
             <div className="flex flex-col items-center justify-center md:w-3/4 w-full">
@@ -62,7 +64,7 @@ export default function Home() {
                     defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
                     onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                     mapId="semidi2"
-                    style={{ width: '100%', height: '500px' }}
+                    style={{ width: '100%', height: '600px' }}
                   >
                     <PoiMarkers pois={data} />
                     <AdvancedMarker ref={markerRef} position={null} />
@@ -78,7 +80,6 @@ export default function Home() {
             </div>
           </section>
         </div>
-
       </div>
     </main>
   );
