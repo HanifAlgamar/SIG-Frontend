@@ -51,10 +51,9 @@ export default function Navbar() {
               <Globe className="w-5" />
             </Link>
           </div>
-        </div>
-
-        <div className="cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)}>
-          <AlignRight />
+          <div className="cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)}>
+            <AlignRight />
+          </div>
         </div>
       </nav>
     </header>
