@@ -13,7 +13,7 @@ export default function Navbar() {
 
   return (
     <header className="primary-color z-10 fixed w-full">
-      <nav className="max-w-[83.5rem] mx-auto px-4 flex items-center justify-between py-4">
+      <nav className="max-w-[80rem] mx-auto px-4 flex items-center justify-between py-4">
         <div className="logo">
           <Link href={'/'}>
             <Image src={'/images/logo.png'} alt="Logo Diskominfotik NTB" width={150} height={50} />

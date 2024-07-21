@@ -78,12 +78,12 @@ export default function Home() {
           <h2>Lokasi Menara Telekomunikasi di Provinsi Nusa Tenggara Barat</h2>
         </div>
 
-        <div className="mx-4">
-          <section className="max-w-7xl mx-auto flex flex-col md:flex-row border shadow-md my-10 rounded-md">
+        <div className="px-4 max-w-7xl mx-auto">
+          <section className=" mx-auto flex flex-col md:flex-row border shadow-md my-10 rounded-md">
             <div className="border-r p-4 text-center md:w-1/4">
               <h3 className="font-bold text-xl">Informasi Statistik</h3>
               <div className="border text-white bg-blue-700 rounded-md p-4 mt-4 text-center">
-                <p>Jumlah BTS</p>
+                <p>Menara Telekomunikasi</p>
                 <p className="font-bold text-xl">{data.length}</p>
               </div>
               <div className="border text-white bg-orange-500 rounded-md p-4 mt-4 text-center">

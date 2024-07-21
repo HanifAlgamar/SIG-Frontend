@@ -5,10 +5,10 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = ({ jumlahBTS, lokasiBlankspot }: { jumlahBTS: number; lokasiBlankspot: number }) => {
   const data = {
-    labels: ['Jumlah BTS', 'Lokasi Blankspot'],
+    labels: ['Menara Telekomunikasi', 'Lokasi Blankspot'],
     datasets: [
       {
-        data: [jumlahBTS, lokasiBlankspot], // Ganti dengan data aktual Anda
+        data: [jumlahBTS, lokasiBlankspot],
         backgroundColor: ['#1D4ED8', '#F97316'],
         hoverBackgroundColor: ['#1D4ED8', '#F97316'],
       },
@@ -23,7 +23,7 @@ const PieChart = ({ jumlahBTS, lokasiBlankspot }: { jumlahBTS: number; lokasiBla
       },
       title: {
         display: true,
-        text: 'Perbandingan Jumlah BTS dan Lokasi Blankspot',
+        text: 'Perbandingan Jumlah Menara dan Lokasi Blankspot',
       },
     },
   };
