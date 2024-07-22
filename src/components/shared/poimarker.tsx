@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
+import { useState, useCallback } from 'react';
+import { AdvancedMarker, Pin, InfoWindow, useMap } from '@vis.gl/react-google-maps';
 
 interface PoiMenara {
   key: string;
@@ -14,16 +14,35 @@ interface PoiMenara {
 
 export const PoiMarkersMenara = (props: { pois: PoiMenara[] }) => {
   const [selectedPoi, setSelectedPoi] = useState<PoiMenara | null>(null);
+  const map = useMap();
+
+  const handleClick = useCallback(
+    (ev: google.maps.MapMouseEvent) => {
+      if (!map) return;
+      if (!ev.latLng) return;
+      map.panTo(ev.latLng);
+    },
+    [map]
+  );
+
+  const handleMarkerClick = (poi: PoiMenara) => (ev: google.maps.MapMouseEvent) => {
+    setSelectedPoi(poi);
+    handleClick(ev);
+  };
 
   return (
     <>
       {props.pois.map((poi: PoiMenara, index) => (
-        <AdvancedMarker key={index} position={{ lat: parseFloat(poi.latitude), lng: parseFloat(poi.longitude) }} onClick={() => setSelectedPoi(poi)}>
+        <AdvancedMarker key={index} position={{ lat: parseFloat(poi.latitude), lng: parseFloat(poi.longitude) }} onClick={handleMarkerClick(poi)}>
           <Pin background={'#1D4ED8'} glyphColor={'#fff'} borderColor={'#fff'} />
         </AdvancedMarker>
       ))}
       {selectedPoi && (
-        <InfoWindow position={{ lat: parseFloat(selectedPoi.latitude), lng: parseFloat(selectedPoi.longitude) }} onCloseClick={() => setSelectedPoi(null)} headerContent={<span className="font-bold text-base">Informasi Menara</span>}>
+        <InfoWindow
+          position={{ lat: parseFloat(selectedPoi.latitude), lng: parseFloat(selectedPoi.longitude) }}
+          onCloseClick={() => setSelectedPoi(null)}
+          headerContent={<span className="font-bold text-base">Informasi Menara Telekomunikasi</span>}
+        >
           <div>
             <h3 style={{ fontWeight: 'bold' }}>{selectedPoi.lokasi}</h3>
             <p>Ketinggian: {selectedPoi.ketinggian}</p>
@@ -55,12 +74,26 @@ interface BlankSpot {
 
 export const BlankSpotMarkers = (props: { blankSpots: BlankSpot[] }) => {
   const [selectedSpot, setSelectedSpot] = useState<BlankSpot | null>(null);
+  const map = useMap();
 
+  const handleClick = useCallback(
+    (ev: google.maps.MapMouseEvent) => {
+      if (!map) return;
+      if (!ev.latLng) return;
+      map.panTo(ev.latLng);
+    },
+    [map]
+  );
+
+  const handleMarkerClick = (poi: BlankSpot) => (ev: google.maps.MapMouseEvent) => {
+    setSelectedSpot(poi);
+    handleClick(ev);
+  };
   return (
     <>
       {props.blankSpots.map((spot: BlankSpot) => (
-        <AdvancedMarker onClick={() => setSelectedSpot(spot)} key={spot.id} position={{ lat: parseFloat(spot.latitude), lng: parseFloat(spot.longitude) }}>
-          <div onClick={() => setSelectedSpot(spot)} className="relative w-10 h-10 cursor-pointer">
+        <AdvancedMarker onClick={handleMarkerClick(spot)} key={spot.id} position={{ lat: parseFloat(spot.latitude), lng: parseFloat(spot.longitude) }}>
+          <div className="relative w-10 h-10 cursor-pointer">
             <div className="absolute top-1/2 left-1/2 w-5 h-5 rounded-full bg-orange-500 transform -translate-x-1/2 -translate-y-1/2" />
             <div className="absolute top-1/2 left-1/2 w-10 h-10 rounded-full bg-orange-500 bg-opacity-30 transform -translate-x-1/2 -translate-y-1/2 animate-pulse-blankspot" />
           </div>

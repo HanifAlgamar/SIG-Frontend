@@ -12,7 +12,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="primary-color z-10 fixed w-full">
+    <header className="primary-color fixed w-full z-40">
       <nav className="max-w-[80rem] mx-auto px-4 flex items-center justify-between py-4">
         <div className="logo">
           <Link href={'/'}>
@@ -67,13 +67,18 @@ const links = [
     label: 'Beranda',
   },
   {
-    link: '/laporan',
-    path: '/laporan',
-    label: 'Laporan',
+    link: '/peta',
+    path: '/peta',
+    label: 'Peta',
   },
   {
-    link: '/about',
-    path: '/about',
-    label: 'About',
+    link: '/laporan',
+    path: '/laporan',
+    label: 'Lapor Blankspot',
+  },
+  {
+    link: '/tentang-kami',
+    path: '/tentang-kami',
+    label: 'Tentang Kami',
   },
 ];
