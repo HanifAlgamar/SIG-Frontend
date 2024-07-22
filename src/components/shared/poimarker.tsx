@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { AdvancedMarker, Pin, InfoWindow, useMap } from '@vis.gl/react-google-maps';
 
-interface PoiMenara {
+export interface PoiMenara {
   key: string;
   lokasi: string;
   ketinggian: string;
@@ -38,27 +38,29 @@ export const PoiMarkersMenara = (props: { pois: PoiMenara[] }) => {
         </AdvancedMarker>
       ))}
       {selectedPoi && (
-        <InfoWindow
-          position={{ lat: parseFloat(selectedPoi.latitude), lng: parseFloat(selectedPoi.longitude) }}
-          onCloseClick={() => setSelectedPoi(null)}
-          headerContent={<span className="font-bold text-base">Informasi Menara Telekomunikasi</span>}
-        >
-          <div>
-            <h3 style={{ fontWeight: 'bold' }}>{selectedPoi.lokasi}</h3>
-            <p>Ketinggian: {selectedPoi.ketinggian}</p>
-            <p>Operator: {selectedPoi.operator}</p>
-            <p>Status: {selectedPoi.status}</p>
-            <p>Tipe: {selectedPoi.tipe}</p>
-            <p>Latitude: {selectedPoi.latitude}</p>
-            <p>Longitude: {selectedPoi.longitude}</p>
-            <button
-              onClick={() => window.open(`https://www.google.com/maps?q=${selectedPoi.latitude},${selectedPoi.longitude}`, '_blank')}
-              style={{ marginTop: '10px', padding: '5px 10px', background: '#1D4ED8', border: 'none', cursor: 'pointer', borderRadius: '4px', color: '#fff' }}
-            >
-              Lihat di Maps
-            </button>
-          </div>
-        </InfoWindow>
+        <div className="">
+          <InfoWindow
+            position={{ lat: parseFloat(selectedPoi.latitude), lng: parseFloat(selectedPoi.longitude) }}
+            onCloseClick={() => setSelectedPoi(null)}
+            headerContent={<span className="font-bold text-base">Informasi Menara Telekomunikasi</span>}
+          >
+            <div>
+              <h3 className="font-bold">{selectedPoi.lokasi}</h3>
+              <p>Ketinggian: {selectedPoi.ketinggian}</p>
+              <p>Operator: {selectedPoi.operator}</p>
+              <p>Status: {selectedPoi.status}</p>
+              <p>Tipe: {selectedPoi.tipe}</p>
+              <p>Latitude: {selectedPoi.latitude}</p>
+              <p>Longitude: {selectedPoi.longitude}</p>
+              <button
+                onClick={() => window.open(`https://www.google.com/maps?q=${selectedPoi.latitude},${selectedPoi.longitude}`, '_blank')}
+                style={{ marginTop: '10px', padding: '5px 10px', background: '#1D4ED8', border: 'none', cursor: 'pointer', borderRadius: '4px', color: '#fff' }}
+              >
+                Lihat di Maps
+              </button>
+            </div>
+          </InfoWindow>
+        </div>
       )}
     </>
   );

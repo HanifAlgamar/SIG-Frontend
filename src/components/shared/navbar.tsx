@@ -27,7 +27,7 @@ export default function Navbar() {
           <ul className="flex gap-2 items-center max-md:flex-col max-md:gap-10">
             {links.map(({ link, label, path }, index) => (
               <li key={index}>
-                <Link href={link} className={`hover:bg-[#002E5B] hover:text-white px-6 rounded-full py-2 transition-all duration-200 ${pathname === label || pathname === path ? ' text-white bg-[#002E5B]' : ''}`}>
+                <Link href={link} className={`hover:bg-[#002E5B] hover:text-white px-5 rounded-full py-1.5 transition-all duration-200 ${pathname === label || pathname === path ? ' text-white bg-[#002E5B]' : ''}`}>
                   {label}
                 </Link>
               </li>
@@ -77,7 +77,7 @@ const links = [
     label: 'Lapor Blankspot',
   },
   {
-    link: '/tentang-kami',
+    link: '/tentang',
     path: '/tentang-kami',
     label: 'Tentang Kami',
   },

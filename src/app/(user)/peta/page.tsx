@@ -5,20 +5,26 @@ import { Input } from '@/components/ui/input';
 import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { BlankSpotMarkers, PoiMarkersMenara } from '@/components/shared/poimarker';
 import PieChart from '@/components/shared/piechart';
-import { Layers2 } from 'lucide-react';
+import { Layers2, X } from 'lucide-react';
+import { PoiMenara } from '@/components/shared/poimarker';
 
 export default function Home() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
 
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState<PoiMenara[]>([]);
+  const [error, setError] = useState<Error | null>(null);
 
-  const [isOpenMenu, setOpenMenu] = useState(false);
+  const [dataBlankspot, setDataBlankspot] = useState([]);
+
+  const [isOpenMenu, setOpenMenu] = useState(true);
   const [isCheckedMenara, setCheckedMenara] = useState(false);
   const [isCheckedBlankspot, setCheckedBlankspot] = useState(false);
 
+  const [selectedOperators, setSelectedOperators] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  const maps = useMap();
   useEffect(() => {
     fetch('http://localhost:5000/api/data')
       .then((response) => {
@@ -27,123 +33,117 @@ export default function Home() {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data: PoiMenara[]) => {
         setData(data);
-        setLoading(false);
       })
       .catch((error) => {
         setError(error);
-        setLoading(false);
       });
   }, []);
 
-  const dummyBlankSpots = [
-    {
-      id: 'bs001',
-      lokasi: 'Desa Sekotong Barat, Kabupaten Lombok Barat',
-      operator: 'XL, Telkomsel',
-      latitude: '-8.7544',
-      longitude: '115.9894',
-    },
-    {
-      id: 'bs002',
-      lokasi: 'Desa Batu Layar, Kabupaten Lombok Barat',
-      operator: 'Indosat, Telkomsel',
-      latitude: '-8.5650',
-      longitude: '116.0498',
-    },
-    {
-      id: 'bs003',
-      lokasi: 'Desa Pemenang Barat, Kabupaten Lombok Utara',
-      operator: 'XL, Indosat',
-      latitude: '-8.4059',
-      longitude: '116.0696',
-    },
-    {
-      id: 'bs004',
-      lokasi: 'Desa Jeringo, Kabupaten Lombok Timur',
-      operator: 'Telkomsel, Indosat',
-      latitude: '-8.6834',
-      longitude: '116.5249',
-    },
-    {
-      id: 'bs005',
-      lokasi: 'Desa Plampang, Kabupaten Sumbawa',
-      operator: 'XL, Telkomsel',
-      latitude: '-8.8079',
-      longitude: '117.7863',
-    },
-  ];
+  console.log(data);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/getblank')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setDataBlankspot(data);
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  }, []);
+
+  console.log(dataBlankspot);
+
+  const handleOperatorChange = (operator: string) => {
+    setSelectedOperators((prev) => (prev.includes(operator) ? prev.filter((item) => item !== operator) : [...prev, operator]));
+    if (!isCheckedMenara) {
+      setCheckedMenara(true);
+    }
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatuses((prev) => (prev.includes(status) ? prev.filter((item) => item !== status) : [...prev, status]));
+    if (!isCheckedMenara) {
+      setCheckedMenara(true);
+    }
+  };
+
+  const handleBlankspotChange = () => {
+    setCheckedBlankspot((prev) => !prev);
+  };
+
+  const handleMenaraChange = () => {
+    setCheckedMenara((prev) => !prev);
+  };
+
+  const filteredData = data.filter((item: PoiMenara) => (selectedOperators.length === 0 || selectedOperators.includes(item.operator)) && (selectedStatuses.length === 0 || selectedStatuses.includes(item.status)));
+
+  const getGoogleMaps = () => {
+  if (typeof google !== 'undefined') {
+    return google;
+  }
+  throw new Error('Google Maps API is not loaded');
+};
 
   return (
     <main className="max-h-screen pt-[4rem]">
-      <div className="border-r ms-3 mt-16 rounded-md max-h-[30rem] overflow-hidden p-4 text-center md:w-72 absolute z-20 bg-white shadow-sm ">
-        <div className="flex gap-4 items-center">
-          <Layers2 />
-          <p className="font-bold text-xl">Layer Control</p>
-        </div>
-
-        <div className="max-h-[25rem] overflow-y-auto filter">
-          <div className="mt-4">
-            <div className="py-1.5 font-bold w-full text-left border-b mb-4">Jenis Penanda</div>
-            <div className="flex gap-4 items-center">
-              <input type="checkbox" onChange={() => setCheckedMenara(!isCheckedMenara)} />
-              <p>Menara Telekomunikasi</p>
-            </div>
-            <div className="flex gap-4 items-center mt-3">
-              <input type="checkbox" onChange={() => setCheckedBlankspot(!isCheckedBlankspot)} />
-              <p>Lokasi Blankspot</p>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <div className="py-1.5 font-bold w-full text-left border-b mb-4">Oprator Menara</div>
-            <div className="flex gap-4 items-center">
-              <input type="checkbox" onChange={() => setCheckedMenara(!isCheckedMenara)} />
-              <p>Telkomsel</p>
-            </div>
-            <div className="flex gap-4 items-center mt-3">
-              <input type="checkbox" onChange={() => setCheckedBlankspot(!isCheckedBlankspot)} />
-              <p>XL</p>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <div className="py-1.5 font-bold w-full text-left border-b mb-4">Status Menara</div>
-            <div className="flex gap-4 items-center">
-              <input type="checkbox" onChange={() => setCheckedMenara(!isCheckedMenara)} />
-              <p>Aktif</p>
-            </div>
-            <div className="flex gap-4 items-center mt-3">
-              <input type="checkbox" onChange={() => setCheckedBlankspot(!isCheckedBlankspot)} />
-              <p>Tidak Aktif</p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <div className="py-1.5 font-bold w-full text-left border-b mb-4">Status Menara</div>
-            <div className="flex gap-4 items-center">
-              <input type="checkbox" onChange={() => setCheckedMenara(!isCheckedMenara)} />
-              <p>Aktif</p>
-            </div>
-            <div className="flex gap-4 items-center mt-3">
-              <input type="checkbox" onChange={() => setCheckedBlankspot(!isCheckedBlankspot)} />
-              <p>Tidak Aktif</p>
-            </div>
-          </div>
-        </div>
-        {/* <h3 className="font-bold text-xl">Informasi Statistik</h3>
-        <div className="border text-white bg-blue-700 rounded-md p-4 mt-4 text-center">
-          <p>Menara Telekomunikasi</p>
-          <p className="font-bold text-xl">{data.length}</p>
-        </div>
-        <div className="border text-white bg-orange-500 rounded-md p-4 mt-4 text-center">
-          <p>Lokasi Blankspot</p>
-          <p className="font-bold text-xl">{dummyBlankSpots.length}</p>
-        </div> */}
-        {/* <div className="mt-6 flex justify-center">
-          <PieChart jumlahBTS={data.length} lokasiBlankspot={dummyBlankSpots.length} />
-        </div> */}
+      <div className="absolute w-max p-3 rounded-md shadow-md mt-5 bg-white ms-3 cursor-pointer" onClick={() => setOpenMenu(true)}>
+        <Layers2 />
       </div>
+      {isOpenMenu && (
+        <div className="border-r ms-3 mt-5 rounded-md max-h-[30rem] overflow-hidden p-4 text-center md:w-72 absolute z-20 bg-white shadow-sm ">
+          <div className="flex justify-between items-center pb-4">
+            <div className="flex gap-4 items-center">
+              <Layers2 />
+              <p className="font-bold text-xl">Layer Control</p>
+            </div>
+            <div className="cursor-pointer" onClick={() => setOpenMenu(false)}>
+              <X />
+            </div>
+          </div>
+
+          <div className="max-h-[25rem] overflow-y-auto filter">
+            <div className="mt-4">
+              <div className="py-1.5 font-bold w-full text-left border-b mb-4">Jenis Penanda</div>
+              <div className="flex gap-4 items-center">
+                <input type="checkbox" checked={isCheckedMenara} onChange={handleMenaraChange} />
+                <p>Menara Telekomunikasi</p>
+              </div>
+              <div className="flex gap-4 items-center mt-3">
+                <input type="checkbox" checked={isCheckedBlankspot} onChange={handleBlankspotChange} />
+                <p>Lokasi Blankspot</p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <div className="py-1.5 font-bold w-full text-left border-b mb-4">Operator Menara</div>
+              {['Telkomsel', 'XL', 'Indosat'].map((operator) => (
+                <div className="flex gap-4 items-center mt-3" key={operator}>
+                  <input type="checkbox" onChange={() => handleOperatorChange(operator)} />
+                  <p>{operator}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <div className="py-1.5 font-bold w-full text-left border-b mb-4">Status Menara</div>
+              {['Aktif', 'Tidak Aktif'].map((status) => (
+                <div className="flex gap-4 items-center mt-3" key={status}>
+                  <input type="checkbox" onChange={() => handleStatusChange(status)} />
+                  <p>{status}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       <div>
         <div className="w-full mx-auto -z-10 fixed">
           <div className="w-full">
@@ -154,9 +154,12 @@ export default function Home() {
                 onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                 mapId="semidi2"
                 style={{ width: '100%', height: '600px' }}
+                zoomControlOptions={{ position: ControlPosition.TOP_RIGHT || null }}
+                streetViewControlOptions={{ position: ControlPosition.TOP_RIGHT }}
+                mapTypeControlOptions={{ position: ControlPosition.TOP_RIGHT }}
               >
-                {isCheckedMenara && <PoiMarkersMenara pois={data} />}
-                {isCheckedBlankspot && <BlankSpotMarkers blankSpots={dummyBlankSpots} />}
+                {isCheckedMenara && <PoiMarkersMenara pois={filteredData} />}
+                {isCheckedBlankspot && <BlankSpotMarkers blankSpots={dataBlankspot} />}
                 <AdvancedMarker ref={markerRef} position={null} />
               </Map>
               <MapControl position={ControlPosition.TOP}>
@@ -224,7 +227,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   }, [onPlaceSelect, placeAutocomplete]);
 
   return (
-    <div className="autocomplete-container mt-16">
+    <div className="autocomplete-container">
       <Input type="text" placeholder="Cari lokasi" className="w-96 shadow-sm focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" ref={inputRef} />
     </div>
   );
