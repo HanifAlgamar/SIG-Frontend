@@ -76,9 +76,4 @@ const links = [
     path: '/laporan',
     label: 'Lapor Blankspot',
   },
-  {
-    link: '/tentang',
-    path: '/tentang-kami',
-    label: 'Tentang Kami',
-  },
 ];

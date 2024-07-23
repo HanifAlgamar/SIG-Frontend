@@ -12,21 +12,21 @@ export default function Home() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
 
-  const [data, setData] = useState<PoiMenara[]>([]);
+  const [dataTowers, setDataTowers] = useState<PoiMenara[]>([]);
   const [error, setError] = useState<Error | null>(null);
 
   const [dataBlankspot, setDataBlankspot] = useState([]);
 
   const [isOpenMenu, setOpenMenu] = useState(true);
-  const [isCheckedMenara, setCheckedMenara] = useState(false);
-  const [isCheckedBlankspot, setCheckedBlankspot] = useState(false);
+  const [isCheckedMenara, setCheckedMenara] = useState(true);
+  const [isCheckedBlankspot, setCheckedBlankspot] = useState(true);
 
   const [selectedOperators, setSelectedOperators] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const maps = useMap();
   useEffect(() => {
-    fetch('http://localhost:5000/api/data')
+    fetch('http://localhost:5000/api/towers')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -34,17 +34,16 @@ export default function Home() {
         return response.json();
       })
       .then((data: PoiMenara[]) => {
-        setData(data);
+        setDataTowers(data);
       })
       .catch((error) => {
         setError(error);
       });
   }, []);
 
-  console.log(data);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/getblank')
+    fetch('http://localhost:5000/api/blankspots')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -58,8 +57,6 @@ export default function Home() {
         setError(error);
       });
   }, []);
-
-  console.log(dataBlankspot);
 
   const handleOperatorChange = (operator: string) => {
     setSelectedOperators((prev) => (prev.includes(operator) ? prev.filter((item) => item !== operator) : [...prev, operator]));
@@ -83,14 +80,8 @@ export default function Home() {
     setCheckedMenara((prev) => !prev);
   };
 
-  const filteredData = data.filter((item: PoiMenara) => (selectedOperators.length === 0 || selectedOperators.includes(item.operator)) && (selectedStatuses.length === 0 || selectedStatuses.includes(item.status)));
+  const filteredData = dataTowers.filter((item: PoiMenara) => (selectedOperators.length === 0 || selectedOperators.includes(item.operator)) && (selectedStatuses.length === 0 || selectedStatuses.includes(item.status)));
 
-  const getGoogleMaps = () => {
-  if (typeof google !== 'undefined') {
-    return google;
-  }
-  throw new Error('Google Maps API is not loaded');
-};
 
   return (
     <main className="max-h-screen pt-[4rem]">
