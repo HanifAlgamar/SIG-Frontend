@@ -125,7 +125,7 @@ export default function Page() {
                   className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
                 />
                 <Dialog>
-                  <DialogTrigger className="bg-[#FBD46D] mt-1 hover:bg-[#fdde8a] text-black py-2 rounded-md">Lihat Peta</DialogTrigger>
+                  <DialogTrigger className="bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md">Lihat Peta</DialogTrigger>
                   <DialogContent className='p-4'>
                     {/* Disini Google Maps */}
                     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
@@ -135,7 +135,10 @@ export default function Page() {
                         onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                         mapId="semidi2"
                         style={{ width: '100%', height: '400px' }}
-                        mapTypeControlOptions={{ position: ControlPosition.BOTTOM_LEFT }}
+                        mapTypeControl={false}
+                        zoomControl={false}
+                        fullscreenControl={false}
+                        streetViewControl={false}
                       ></Map>
                       <MapControl position={ControlPosition.TOP}>
                         <div className="autocomplete-control mt-14">
@@ -181,7 +184,7 @@ export default function Page() {
             <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''} onChange={onChangeCaptcha} />
           </div>
           <div>
-            <Button className="w-full bg-[#002E5B] hover:bg-[#1a4167] my-5 disabled:bg-opacity-75 disabled:cursor-not-allowed" type="submit" disabled={!isFormValid()}>
+            <Button className="w-full bg-gradient-to-br from-blue-500 to-blue-600 my-5 disabled:bg-opacity-75 disabled:cursor-not-allowed" type="submit" disabled={!isFormValid()}>
               Kirim
             </Button>
           </div>

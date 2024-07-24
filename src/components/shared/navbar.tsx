@@ -12,8 +12,8 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="primary-color fixed w-full z-40">
-      <nav className="max-w-[80rem] mx-auto px-4 flex items-center justify-between py-4">
+    <header className="bg-white fixed w-full z-40 shadow-sm">
+      <nav className="max-w-[80rem] mx-auto px-4 flex items-center justify-between py-4 text-slate-600 ">
         <div className="logo">
           <Link href={'/'}>
             <Image src={'/images/logo.png'} alt="Logo Diskominfotik NTB" width={150} height={50} />
@@ -27,7 +27,7 @@ export default function Navbar() {
           <ul className="flex gap-2 items-center max-md:flex-col max-md:gap-10">
             {links.map(({ link, label, path }, index) => (
               <li key={index}>
-                <Link href={link} className={`hover:bg-[#002E5B] hover:text-white px-5 rounded-full py-1.5 transition-all duration-200 ${pathname === label || pathname === path ? ' text-white bg-[#002E5B]' : ''}`}>
+                <Link href={link} className={`px-5 rounded-full font-medium py-2 transition-all hover:bg-blue-200/20 hover:text-black duration-200 ${pathname === label || pathname === path ? '' : ''}`}>
                   {label}
                 </Link>
               </li>
@@ -36,17 +36,17 @@ export default function Navbar() {
         </div>
 
         <div className="flex gap-4 items-center">
-          <div className="px-1.5 py-1 hover:bg-[#002E5B] cursor-pointer hover:text-white transition-all duration-200 rounded-full border border-black">
+          <div className="px-1.5 py-1 hover:bg-gradient-to-br from-blue-500 to-blue-600 cursor-pointer hover:text-white transition-all duration-200 rounded-full border border-slate-500">
             <Link href={'/'} className="">
               <Instagram className="w-5" />
             </Link>
           </div>
-          <div className="px-1.5 py-1 hover:bg-[#002E5B]  cursor-pointer hover:text-white transition-all rounded-full border border-black">
+          <div className="px-1.5 py-1 hover:bg-gradient-to-br from-blue-500 to-blue-600  cursor-pointer hover:text-white transition-all rounded-full border border-slate-500">
             <Link href={'/'}>
               <Facebook className="w-5" />
             </Link>
           </div>
-          <div className="px-1.5 py-1 hover:bg-[#002E5B]  cursor-pointer hover:text-white transition-all rounded-full border border-black">
+          <div className="px-1.5 py-1 hover:bg-gradient-to-br from-blue-500 to-blue-600  cursor-pointer hover:text-white transition-all rounded-full border border-slate-500">
             <Link href={'/'}>
               <Globe className="w-5" />
             </Link>

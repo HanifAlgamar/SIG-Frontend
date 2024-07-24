@@ -7,10 +7,16 @@ import { BlankSpotMarkers, PoiMarkersMenara } from '@/components/shared/poimarke
 import PieChart from '@/components/shared/piechart';
 import { Layers2, X } from 'lucide-react';
 import { PoiMenara } from '@/components/shared/poimarker';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
+
+  const variants = {
+    open: { opacity: 1 },
+    closed: { opacity: 0 },
+  };
 
   const [dataTowers, setDataTowers] = useState<PoiMenara[]>([]);
   const [error, setError] = useState<Error | null>(null);
@@ -40,7 +46,6 @@ export default function Home() {
         setError(error);
       });
   }, []);
-
 
   useEffect(() => {
     fetch('http://localhost:5000/api/blankspots')
@@ -82,59 +87,67 @@ export default function Home() {
 
   const filteredData = dataTowers.filter((item: PoiMenara) => (selectedOperators.length === 0 || selectedOperators.includes(item.operator)) && (selectedStatuses.length === 0 || selectedStatuses.includes(item.status)));
 
-
   return (
     <main className="max-h-screen pt-[4rem]">
       <div className="absolute w-max p-3 rounded-md shadow-md mt-5 bg-white ms-3 cursor-pointer" onClick={() => setOpenMenu(true)}>
         <Layers2 />
       </div>
-      {isOpenMenu && (
-        <div className="border-r ms-3 mt-5 rounded-md max-h-[30rem] overflow-hidden p-4 text-center md:w-72 absolute z-20 bg-white shadow-sm ">
-          <div className="flex justify-between items-center pb-4">
-            <div className="flex gap-4 items-center">
-              <Layers2 />
-              <p className="font-bold text-xl">Layer Control</p>
-            </div>
-            <div className="cursor-pointer" onClick={() => setOpenMenu(false)}>
-              <X />
-            </div>
-          </div>
-
-          <div className="max-h-[25rem] overflow-y-auto filter">
-            <div className="mt-4">
-              <div className="py-1.5 font-bold w-full text-left border-b mb-4">Jenis Penanda</div>
+      <AnimatePresence>
+        {isOpenMenu && (
+          <motion.div
+            key="content"
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={variants}
+            transition={{ duration: 0.2 }}
+            className="border-r ms-3 mt-5 rounded-md max-h-[30rem] overflow-hidden p-4 text-center md:w-72 absolute z-20 bg-white shadow-sm "
+          >
+            <div className="flex justify-between items-center pb-4">
               <div className="flex gap-4 items-center">
-                <input type="checkbox" checked={isCheckedMenara} onChange={handleMenaraChange} />
-                <p>Menara Telekomunikasi</p>
+                <p className="font-bold text-xl">Layer Control</p>
               </div>
-              <div className="flex gap-4 items-center mt-3">
-                <input type="checkbox" checked={isCheckedBlankspot} onChange={handleBlankspotChange} />
-                <p>Lokasi Blankspot</p>
+              <div className="cursor-pointer" onClick={() => setOpenMenu(false)}>
+                <X />
               </div>
             </div>
 
-            <div className="mt-4">
-              <div className="py-1.5 font-bold w-full text-left border-b mb-4">Operator Menara</div>
-              {['Telkomsel', 'XL', 'Indosat'].map((operator) => (
-                <div className="flex gap-4 items-center mt-3" key={operator}>
-                  <input type="checkbox" onChange={() => handleOperatorChange(operator)} />
-                  <p>{operator}</p>
+            <div className="max-h-[25rem] overflow-y-auto filter">
+              <div className="mt-4">
+                <div className="py-1.5 font-bold w-full text-left border-b mb-4">Jenis Penanda</div>
+                <div className="flex gap-4 items-center">
+                  <input type="checkbox" checked={isCheckedMenara} onChange={handleMenaraChange} />
+                  <p>Menara Telekomunikasi</p>
                 </div>
-              ))}
-            </div>
+                <div className="flex gap-4 items-center mt-3">
+                  <input type="checkbox" checked={isCheckedBlankspot} onChange={handleBlankspotChange} />
+                  <p>Lokasi Blankspot</p>
+                </div>
+              </div>
 
-            <div className="mt-4">
-              <div className="py-1.5 font-bold w-full text-left border-b mb-4">Status Menara</div>
-              {['Aktif', 'Tidak Aktif'].map((status) => (
-                <div className="flex gap-4 items-center mt-3" key={status}>
-                  <input type="checkbox" onChange={() => handleStatusChange(status)} />
-                  <p>{status}</p>
-                </div>
-              ))}
+              <div className="mt-4">
+                <div className="py-1.5 font-bold w-full text-left border-b mb-4">Operator Menara</div>
+                {['Telkomsel', 'XL', 'Indosat'].map((operator) => (
+                  <div className="flex gap-4 items-center mt-3" key={operator}>
+                    <input type="checkbox" onChange={() => handleOperatorChange(operator)} />
+                    <p>{operator}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4">
+                <div className="py-1.5 font-bold w-full text-left border-b mb-4">Status Menara</div>
+                {['Aktif', 'Tidak Aktif'].map((status) => (
+                  <div className="flex gap-4 items-center mt-3" key={status}>
+                    <input type="checkbox" onChange={() => handleStatusChange(status)} />
+                    <p>{status}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div>
         <div className="w-full mx-auto -z-10 fixed">
           <div className="w-full">
