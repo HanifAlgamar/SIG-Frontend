@@ -149,7 +149,7 @@ export default function Home() {
         )}
       </AnimatePresence>
       <div>
-        <div className="w-full mx-auto -z-10 fixed">
+        <div className="w-full h-screen mx-auto -z-10 fixed">
           <div className="w-full">
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
               <Map
@@ -157,7 +157,7 @@ export default function Home() {
                 defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
                 onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                 mapId="semidi2"
-                style={{ width: '100%', height: '600px' }}
+                style={{ width: '100%', height: '100vh' }}
                 zoomControlOptions={{ position: ControlPosition.TOP_RIGHT || null }}
                 streetViewControlOptions={{ position: ControlPosition.TOP_RIGHT }}
                 mapTypeControlOptions={{ position: ControlPosition.TOP_RIGHT }}
