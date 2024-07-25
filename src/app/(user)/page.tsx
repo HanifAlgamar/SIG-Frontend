@@ -91,7 +91,7 @@ export default function Home() {
             </motion.div>
           </div>
           <div className="flex justify-center">
-            <div className="bg-white rounded-md max-w-4xl gap-4 w-full flex justify-between mx-auto shadow-sm px-8 py-4 absolute top-[35rem]">
+            <div className="bg-white rounded-md max-w-4xl gap-4 w-full flex justify-between mx-auto shadow-sm px-8 py-4 absolute top-[90%]">
               <div>
                 <div className="p-4 gap-2 items-center min-w-64 w-64 flex flex-col bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-md shadow-sm text-center">
                   <div className="flex gap-3 items-center">

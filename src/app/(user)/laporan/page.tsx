@@ -6,22 +6,35 @@ import { Textarea } from '../../../components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, MapCameraChangedEvent, useAdvancedMarkerRef } from '@vis.gl/react-google-maps';
+import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, MapCameraChangedEvent, Marker } from '@vis.gl/react-google-maps';
+
+interface FormData {
+  nama: string;
+  email: string;
+  telepon: string;
+  lokasi: string;
+  operator: string;
+  keterangan: string;
+  latitude: string;
+  longitude: string;
+}
 
 export default function Page() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nama: '',
     email: '',
     telepon: '',
     lokasi: '',
     operator: '',
     keterangan: '',
+    latitude: '',
+    longitude: '',
   });
-  const [captchaValue, setCaptchaValue] = useState(null);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
-  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [markerPosition, setMarkerPosition] = useState({ lat: -8.583333, lng: 116.116667 });
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -29,7 +42,7 @@ export default function Page() {
     }));
   };
 
-  const onChangeCaptcha = (value: any) => {
+  const onChangeCaptcha = (value: string | null) => {
     setCaptchaValue(value);
   };
 
@@ -37,7 +50,7 @@ export default function Page() {
     return Object.values(formData).every((value) => value.trim() !== '') && captchaValue;
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isFormValid()) return;
 
@@ -52,7 +65,6 @@ export default function Page() {
 
       if (response.ok) {
         alert('Laporan berhasil dikirim!');
-        // Reset form after successful submission
         setFormData({
           nama: '',
           email: '',
@@ -60,6 +72,8 @@ export default function Page() {
           lokasi: '',
           operator: '',
           keterangan: '',
+          latitude: '',
+          longitude: '',
         });
         setCaptchaValue(null);
       } else {
@@ -71,8 +85,34 @@ export default function Page() {
     }
   };
 
+  const onMapClick = (e: any) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setMarkerPosition({ lat, lng });
+      setFormData((prevData) => ({
+        ...prevData,
+        latitude: lat.toString(),
+        longitude: lng.toString(),
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (selectedPlace?.geometry?.location) {
+      const lat = selectedPlace.geometry.location.lat();
+      const lng = selectedPlace.geometry.location.lng();
+      setMarkerPosition({ lat, lng });
+      setFormData((prevData) => ({
+        ...prevData,
+        latitude: lat.toString(),
+        longitude: lng.toString(),
+      }));
+    }
+  }, [selectedPlace]);
+
   return (
-    <div className="pt-28 layout min-h-screen ">
+    <div className="pt-28 layout min-h-screen">
       <div className="text-center">
         <h1 className="font-bold text-2xl">Laporan Lokasi Blank Spot</h1>
         <h2>Lengkapi data berikut untuk melaporkan lokasi atau daerah blank spot</h2>
@@ -125,13 +165,13 @@ export default function Page() {
                   className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
                 />
                 <Dialog>
-                  <DialogTrigger className="bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md">Lihat Peta</DialogTrigger>
-                  <DialogContent className='p-4'>
-                    {/* Disini Google Maps */}
+                  <DialogTrigger className="w-full bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md hover:bg-gradient-to-tr/ hover:bg-opacity-80 transition-colors duration-200">Lihat Peta</DialogTrigger>
+                  <DialogContent className="p-4">
                     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
                       <Map
                         defaultZoom={13}
                         defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
+                        onClick={onMapClick}
                         onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                         mapId="semidi2"
                         style={{ width: '100%', height: '400px' }}
@@ -139,19 +179,36 @@ export default function Page() {
                         zoomControl={false}
                         fullscreenControl={false}
                         streetViewControl={false}
-                      ></Map>
+                      >
+                        <Marker
+                          position={markerPosition}
+                          draggable={true}
+                          onDragEnd={(e) => {
+                            if (e.latLng) {
+                              const lat = e.latLng.lat();
+                              const lng = e.latLng.lng();
+                              setMarkerPosition({ lat, lng });
+                              setFormData((prevData) => ({
+                                ...prevData,
+                                latitude: lat.toString(),
+                                longitude: lng.toString(),
+                              }));
+                            }
+                          }}
+                        />
+                        <MapHandler place={selectedPlace} setFormData={setFormData} />
+                      </Map>
                       <MapControl position={ControlPosition.TOP}>
                         <div className="autocomplete-control mt-14">
                           <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
                         </div>
                       </MapControl>
-                      <MapHandler place={selectedPlace} marker={marker} />
                     </APIProvider>
                   </DialogContent>
                 </Dialog>
                 <div className="flex justify-between gap-3 mt-1">
-                  <Input type="text" name="latitude" value={formData.lokasi} onChange={handleInputChange} placeholder="Latitude" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
-                  <Input type="text" name="longitude" value={formData.lokasi} onChange={handleInputChange} placeholder="longtitude" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+                  <Input type="text" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="Latitude" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+                  <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
                 </div>
               </div>
             </div>
@@ -183,9 +240,9 @@ export default function Page() {
           <div className="mt-4">
             <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''} onChange={onChangeCaptcha} />
           </div>
-          <div>
-            <Button className="w-full bg-gradient-to-br from-blue-500 to-blue-600 my-5 disabled:bg-opacity-75 disabled:cursor-not-allowed" type="submit" disabled={!isFormValid()}>
-              Kirim
+          <div className="mt-3 flex justify-between items-center">
+            <Button className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600 my-5 disabled:bg-opacity-75 disabled:cursor-not-allowed" type="submit" disabled={!isFormValid()}>
+              Kirim Laporan
             </Button>
           </div>
         </form>
@@ -196,14 +253,27 @@ export default function Page() {
 
 interface MapHandlerProps {
   place: google.maps.places.PlaceResult | null;
-  marker: google.maps.marker.AdvancedMarkerElement | null;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 }
 
-const MapHandler = ({ place, marker }: MapHandlerProps) => {
+const MapHandler = ({ place, setFormData }: MapHandlerProps) => {
   const map = useMap();
+  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
 
   useEffect(() => {
-    if (!map || !place || !marker) return;
+    if (!map || !place) return;
+
+    if (marker) {
+      marker.setMap(null);
+    }
+
+    const newMarker = new google.maps.Marker({
+      position: place.geometry?.location,
+      map,
+      draggable: true,
+    });
+
+    setMarker(newMarker);
 
     if (place.geometry?.viewport) {
       map.fitBounds(place.geometry.viewport);
@@ -211,8 +281,19 @@ const MapHandler = ({ place, marker }: MapHandlerProps) => {
       map.setCenter(place.geometry.location);
       map.setZoom(15);
     }
-    marker.position = place.geometry?.location;
-  }, [map, place, marker]);
+
+    newMarker.addListener('dragend', (e: any) => {
+      if (e.latLng) {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        setFormData((prevData) => ({
+          ...prevData,
+          latitude: lat.toString(),
+          longitude: lng.toString(),
+        }));
+      }
+    });
+  }, [map, place, marker, setFormData]);
 
   return null;
 };
