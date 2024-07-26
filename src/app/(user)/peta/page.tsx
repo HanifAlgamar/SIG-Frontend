@@ -200,7 +200,7 @@ const MapHandler = ({ place, marker }: MapHandlerProps) => {
     marker.position = place.geometry?.location;
   }, [map, place, marker]);
 
-  return null; 
+  return null;
 };
 
 interface PlaceAutocompleteProps {
@@ -232,7 +232,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
 
   return (
     <div className="autocomplete-container">
-      <Input type="text" placeholder="Cari lokasi" className="w-96 shadow-sm focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" ref={inputRef} />
+      <Input type="text" placeholder="Cari lokasi" className="w-96 shadow-sm focus:border-blue-600 focus:outline-none outline-none transition-all duration-150" ref={inputRef} />
     </div>
   );
 };
