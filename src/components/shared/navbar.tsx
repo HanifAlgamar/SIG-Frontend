@@ -20,14 +20,14 @@ export default function Navbar() {
           </Link>
         </div>
         <div
-          className={`menu max-md:absolute max-md:py-8 max-md:-z-10 max-md:h-screen max-md:text-center max-md:bg-[#FBD46D] max-md:top-[4.2rem] transition-all duration-200 max-md:right-0 max-md:border-t max-md:w-full ${
-            isOpen ? 'max-md:block' : 'max-md:opacity-0'
+          className={`menu max-md:absolute max-md:py-8 max-md:-z-10 max-md:h-screen max-md:text-center max-md:bg-white max-md:top-[4.2rem] transition-all duration-200 max-md:right-0 max-md:border-t max-md:w-full ${
+            isOpen ? 'max-md:block' : 'max-md:opacity-0 max-md:hidden'
           }`}
         >
           <ul className="flex gap-2 items-center max-md:flex-col max-md:gap-10">
             {links.map(({ link, label, path }, index) => (
-              <li key={index}>
-                <Link href={link} className={`px-5 rounded-full font-medium py-2 transition-all hover:bg-blue-200/20 hover:text-black duration-200 ${pathname === label || pathname === path ? '' : ''}`}>
+              <li key={index} className="">
+                <Link href={link} className={`px-5 rounded-full font-medium py-2 transition-all hover:bg-blue-200/20 hover:text-black duration-200 ${pathname === label || pathname === path ? '' : ''}`} onClick={() => setIsOpen(!isOpen)}>
                   {label}
                 </Link>
               </li>

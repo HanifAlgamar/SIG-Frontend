@@ -7,16 +7,18 @@ import { Button } from '@/components/ui/button';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, MapCameraChangedEvent, Marker } from '@vis.gl/react-google-maps';
+import toast from 'react-hot-toast';
 
 interface FormData {
   nama: string;
   email: string;
   telepon: string;
   lokasi: string;
-  operator: string;
-  keterangan: string;
   latitude: string;
   longitude: string;
+  operator: string;
+  keterangan: string;
+  imgUrl: string;
 }
 
 export default function Page() {
@@ -25,14 +27,17 @@ export default function Page() {
     email: '',
     telepon: '',
     lokasi: '',
-    operator: '',
-    keterangan: '',
     latitude: '',
     longitude: '',
+    operator: '',
+    keterangan: '',
+    imgUrl: '',
   });
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerPosition, setMarkerPosition] = useState({ lat: -8.583333, lng: 116.116667 });
+  const [isSubmit, setIsSubmitting] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -46,13 +51,17 @@ export default function Page() {
     setCaptchaValue(value);
   };
 
-  const isFormValid = () => {
-    return Object.values(formData).every((value) => value.trim() !== '') && captchaValue;
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isFormValid()) return;
+
+    if (!captchaValue) {
+      toast('Mohon untuk melengkapi CAPTCHA', {
+        icon: '⚠️',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('http://localhost:5000/api/report', {
@@ -64,25 +73,31 @@ export default function Page() {
       });
 
       if (response.ok) {
-        alert('Laporan berhasil dikirim!');
+        toast.success('Laporan blankspot berhasil dikirimkan');
         setFormData({
           nama: '',
           email: '',
           telepon: '',
           lokasi: '',
-          operator: '',
-          keterangan: '',
           latitude: '',
           longitude: '',
+          operator: '',
+          keterangan: '',
+          imgUrl: '',
         });
         setCaptchaValue(null);
+        if (recaptchaRef.current) {
+          (recaptchaRef.current as ReCAPTCHA).reset();
+        }
       } else {
-        alert('Terjadi kesalahan saat mengirim laporan.');
+        toast.error('Terjadi kesalahan saat mengirimkan laporan');
       }
     } catch (error) {
+      toast.error('Terjadi kesalahan saat mengirimkan laporan');
       console.error('Error:', error);
-      alert('Terjadi kesalahan saat mengirim laporan.');
     }
+
+    setIsSubmitting(false);
   };
 
   const onMapClick = (e: any) => {
@@ -123,47 +138,19 @@ export default function Page() {
             <div className="flex flex-col gap-[0.55rem] w-full">
               <div className="flex flex-col gap-3">
                 <label htmlFor="nama">Nama</label>
-                <Input
-                  type="text"
-                  name="nama"
-                  value={formData.nama}
-                  onChange={handleInputChange}
-                  placeholder="Masukkan nama lengkap Anda"
-                  className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-                />
+                <Input type="text" name="nama" value={formData.nama} onChange={handleInputChange} placeholder="Masukkan nama lengkap Anda" className="w-full" required />
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="email">Email</label>
-                <Input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Alamat email aktif Anda"
-                  className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-                />
+                <Input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Alamat email aktif Anda" className="w-full" required />
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="telepon">Telepon</label>
-                <Input
-                  type="tel"
-                  name="telepon"
-                  value={formData.telepon}
-                  onChange={handleInputChange}
-                  placeholder="Nomor telepon yang dapat dihubungi"
-                  className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-                />
+                <Input type="tel" name="telepon" value={formData.telepon} onChange={handleInputChange} placeholder="Nomor telepon yang dapat dihubungi" className="w-full" required />
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="lokasi">Lokasi</label>
-                <Input
-                  type="text"
-                  name="lokasi"
-                  value={formData.lokasi}
-                  onChange={handleInputChange}
-                  placeholder="Alamat lengkap lokasi blank spot"
-                  className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-                />
+                <Input type="text" name="lokasi" value={formData.lokasi} onChange={handleInputChange} placeholder="Alamat lengkap lokasi blank spot" className="w-full" required />
                 <Dialog>
                   <DialogTrigger className="w-full bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md hover:bg-gradient-to-tr/ hover:bg-opacity-80 transition-colors duration-200">Lihat Peta</DialogTrigger>
                   <DialogContent className="p-4">
@@ -207,41 +194,32 @@ export default function Page() {
                   </DialogContent>
                 </Dialog>
                 <div className="flex justify-between gap-3 mt-1">
-                  <Input type="text" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="Latitude" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
-                  <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" />
+                  <Input type="text" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="Latitude" className="w-full" required />
+                  <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full" required />
                 </div>
               </div>
             </div>
-            <div className="w-full h-full">
+            <div className="w-full h-full flex flex-col gap-[0.55rem]">
               <div className="flex flex-col gap-3">
                 <label htmlFor="operator">Operator</label>
-                <Input
-                  type="text"
-                  name="operator"
-                  value={formData.operator}
-                  onChange={handleInputChange}
-                  placeholder="Nama operator seluler (Telkomsel, XL, Indosat, dll.)"
-                  className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-                />
+                <Input type="text" name="operator" value={formData.operator} onChange={handleInputChange} placeholder="Nama operator seluler (Telkomsel, XL, Indosat, dll.)" className="w-full" required />
               </div>
-              <div className="flex flex-col gap-3 mt-3">
+              <div className="flex flex-col gap-3">
+                <label htmlFor="imgUrl">Gambar (Jpeg, Png)</label>
+                <Input type="file" name="imgUrl" value={formData.imgUrl} onChange={handleInputChange} placeholder="Foto lokasi blankspot" className="w-full" required />
+              </div>
+
+              <div className="flex flex-col gap-3">
                 <label htmlFor="keterangan">Keterangan</label>
-                <Textarea
-                  name="keterangan"
-                  value={formData.keterangan}
-                  onChange={handleInputChange}
-                  placeholder="Masukkan keterangan"
-                  className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-                  rows={15}
-                />
+                <Textarea name="keterangan" value={formData.keterangan} onChange={handleInputChange} placeholder="Masukkan keterangan" className="w-full resize-none" rows={11} required />
               </div>
             </div>
           </div>
           <div className="mt-4">
-            <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''} onChange={onChangeCaptcha} />
+            <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''} onChange={onChangeCaptcha} ref={recaptchaRef} />
           </div>
           <div className="mt-3 flex justify-between items-center">
-            <Button className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600 my-5 disabled:bg-opacity-75 disabled:cursor-not-allowed" type="submit" disabled={!isFormValid()}>
+            <Button className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600 my-5 disabled:bg-opacity-75 disabled:cursor-not-allowed" type="submit" disabled={isSubmit}>
               Kirim Laporan
             </Button>
           </div>
@@ -327,7 +305,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
 
   return (
     <div className="autocomplete-container">
-      <Input type="text" placeholder="Cari lokasi" className="w-96 shadow-sm focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150" ref={inputRef} />
+      <Input type="text" placeholder="Cari lokasi" className="w-96 shadow-sm" ref={inputRef} />
     </div>
   );
 };

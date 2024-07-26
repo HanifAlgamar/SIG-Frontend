@@ -89,7 +89,7 @@ export default function Home() {
 
   return (
     <main className="max-h-screen pt-[4rem]">
-      <div className="absolute w-max p-3 rounded-md shadow-md mt-5 bg-white ms-3 cursor-pointer" onClick={() => setOpenMenu(true)}>
+      <div className="absolute w-max max-md:mt-28 p-3 rounded-md shadow-md mt-5 bg-white ms-3 cursor-pointer" onClick={() => setOpenMenu(true)}>
         <Layers2 />
       </div>
       <AnimatePresence>
@@ -101,7 +101,7 @@ export default function Home() {
             exit="closed"
             variants={variants}
             transition={{ duration: 0.2 }}
-            className="border-r ms-3 mt-5 rounded-md max-h-[30rem] overflow-hidden p-4 text-center md:w-72 absolute z-20 bg-white shadow-sm "
+            className="border-r ms-3 mt-5 max-md:mt-28  rounded-md max-h-[30rem] overflow-hidden p-4 text-center md:w-72 absolute z-20 bg-white shadow-sm "
           >
             <div className="flex justify-between items-center pb-4">
               <div className="flex gap-4 items-center">
@@ -167,7 +167,7 @@ export default function Home() {
                 <AdvancedMarker ref={markerRef} position={null} />
               </Map>
               <MapControl position={ControlPosition.TOP}>
-                <div className="autocomplete-control mt-6">
+                <div className="autocomplete-control mt-6 max-md:mt-14">
                   <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
                 </div>
               </MapControl>
