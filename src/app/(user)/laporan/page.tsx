@@ -8,6 +8,11 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, MapCameraChangedEvent, Marker } from '@vis.gl/react-google-maps';
 import toast from 'react-hot-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { v4 as uuidv4 } from 'uuid';
+import { storage } from '@/firebase/firebase';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 interface FormData {
   nama: string;
@@ -18,7 +23,8 @@ interface FormData {
   longitude: string;
   operator: string;
   keterangan: string;
-  imgUrl: string;
+  imgurl: string;
+  captcha: string;
 }
 
 export default function Page() {
@@ -31,13 +37,30 @@ export default function Page() {
     longitude: '',
     operator: '',
     keterangan: '',
-    imgUrl: '',
+    imgurl: '',
+    captcha: '',
   });
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerPosition, setMarkerPosition] = useState({ lat: -8.583333, lng: 116.116667 });
   const [isSubmit, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | undefined>('');
+  const [selectOperator, setSelectOperator] = useState<string | null>();
+  const inputImage = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFile(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+      };
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -50,7 +73,6 @@ export default function Page() {
   const onChangeCaptcha = (value: string | null) => {
     setCaptchaValue(value);
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -63,13 +85,36 @@ export default function Page() {
 
     setIsSubmitting(true);
 
+    const idImage = uuidv4();
+    const imageName = `${idImage}-${file?.name}`;
+    let imageDownloadUrl = imageUrl;
+
+    if (file) {
+      const fileRef = ref(storage, `report-image/${imageName}`);
+      await uploadBytes(fileRef, file);
+      imageDownloadUrl = await getDownloadURL(fileRef);
+    }
+
+    const dataToSend = {
+      nama: formData.nama,
+      email: formData.email,
+      telepon: formData.telepon,
+      lokasi: formData.lokasi,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      operator: selectOperator,
+      keterangan: formData.keterangan,
+      imgurl: imageDownloadUrl,
+      captcha: captchaValue,
+    };
+
     try {
       const response = await fetch('http://localhost:5000/api/report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (response.ok) {
@@ -83,11 +128,20 @@ export default function Page() {
           longitude: '',
           operator: '',
           keterangan: '',
-          imgUrl: '',
+          imgurl: '',
+          captcha: '',
         });
+
+        setSelectOperator('');
         setCaptchaValue(null);
         if (recaptchaRef.current) {
           (recaptchaRef.current as ReCAPTCHA).reset();
+        }
+        setImageUrl('');
+        setFile(null);
+
+        if (inputImage.current) {
+          inputImage.current.value = '';
         }
       } else {
         toast.error('Terjadi kesalahan saat mengirimkan laporan');
@@ -120,6 +174,7 @@ export default function Page() {
       setMarkerPosition({ lat, lng });
       setFormData((prevData) => ({
         ...prevData,
+        lokasi: selectedPlace.formatted_address || '',
         latitude: lat.toString(),
         longitude: lng.toString(),
       }));
@@ -154,6 +209,7 @@ export default function Page() {
                 <Dialog>
                   <DialogTrigger className="w-full bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md hover:bg-gradient-to-tr/ hover:bg-opacity-80 transition-colors duration-200">Lihat Peta</DialogTrigger>
                   <DialogContent className="p-4">
+                    <DialogTitle>Pilih lokasi dengan drag pointer</DialogTitle>
                     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
                       <Map
                         defaultZoom={13}
@@ -161,7 +217,7 @@ export default function Page() {
                         onClick={onMapClick}
                         onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                         mapId="semidi2"
-                        style={{ width: '100%', height: '400px' }}
+                        style={{ width: '100%', height: '500px' }}
                         mapTypeControl={false}
                         zoomControl={false}
                         fullscreenControl={false}
@@ -183,13 +239,13 @@ export default function Page() {
                             }
                           }}
                         />
-                        <MapHandler place={selectedPlace} setFormData={setFormData} />
                       </Map>
                       <MapControl position={ControlPosition.TOP}>
-                        <div className="autocomplete-control mt-14">
+                        <div className="autocomplete-control z-50 mt-14">
                           <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
                         </div>
                       </MapControl>
+                      <MapHandler place={selectedPlace} setFormData={setFormData} />
                     </APIProvider>
                   </DialogContent>
                 </Dialog>
@@ -202,11 +258,20 @@ export default function Page() {
             <div className="w-full h-full flex flex-col gap-[0.55rem]">
               <div className="flex flex-col gap-3">
                 <label htmlFor="operator">Operator</label>
-                <Input type="text" name="operator" value={formData.operator} onChange={handleInputChange} placeholder="Nama operator seluler (Telkomsel, XL, Indosat, dll.)" className="w-full" required />
+                <Select required onValueChange={(value) => setSelectOperator(value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Operator" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Telkomsel">Telkomsel</SelectItem>
+                    <SelectItem value="XL">XL</SelectItem>
+                    <SelectItem value="Indosat">Indosat</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <label htmlFor="imgUrl">Gambar (Jpeg, Png)</label>
-                <Input type="file" name="imgUrl" value={formData.imgUrl} onChange={handleInputChange} placeholder="Foto lokasi blankspot" className="w-full" required />
+                <label htmlFor="imgurl">Gambar (Jpeg, Png)</label>
+                <Input type="file" name="imgurl" onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full" ref={inputImage} required />
               </div>
 
               <div className="flex flex-col gap-3">

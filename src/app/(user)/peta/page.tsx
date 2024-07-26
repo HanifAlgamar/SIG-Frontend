@@ -9,7 +9,7 @@ import { Layers2, X } from 'lucide-react';
 import { PoiMenara } from '@/components/shared/poimarker';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Home() {
+export default function Page() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
 
@@ -200,7 +200,7 @@ const MapHandler = ({ place, marker }: MapHandlerProps) => {
     marker.position = place.geometry?.location;
   }, [map, place, marker]);
 
-  return null;
+  return null; 
 };
 
 interface PlaceAutocompleteProps {
