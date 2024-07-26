@@ -185,7 +185,7 @@ export default function Page() {
     <div className="pt-28 layout min-h-screen">
       <div className="text-center">
         <h1 className="font-bold text-2xl">Laporan Lokasi Blank Spot</h1>
-        <h2>Lengkapi data berikut untuk melaporkan lokasi atau daerah blank spot</h2>
+        <h2>Lengkapi data berikut untuk melaporkan lokasi atau daerah blankspot</h2>
       </div>
       <div>
         <form onSubmit={handleSubmit} className="bg-white p-5 rounded-md shadow-md my-10">
@@ -204,8 +204,12 @@ export default function Page() {
                 <Input type="tel" name="telepon" value={formData.telepon} onChange={handleInputChange} placeholder="Nomor telepon yang dapat dihubungi" className="w-full" required />
               </div>
               <div className="flex flex-col gap-3">
-                <label htmlFor="lokasi">Lokasi</label>
+                <label htmlFor="lokasi">Lokasi Blankspot</label>
                 <Input type="text" name="lokasi" value={formData.lokasi} onChange={handleInputChange} placeholder="Alamat lengkap lokasi blank spot" className="w-full" required />
+                <div className="flex justify-between gap-3 mt-1">
+                  <Input type="text" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="Latitude" className="w-full" required />
+                  <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full" required />
+                </div>
                 <Dialog>
                   <DialogTrigger className="w-full bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md hover:bg-gradient-to-tr/ hover:bg-opacity-80 transition-colors duration-200">Lihat Peta</DialogTrigger>
                   <DialogContent className="p-4">
@@ -249,10 +253,7 @@ export default function Page() {
                     </APIProvider>
                   </DialogContent>
                 </Dialog>
-                <div className="flex justify-between gap-3 mt-1">
-                  <Input type="text" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="Latitude" className="w-full" required />
-                  <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full" required />
-                </div>
+               
               </div>
             </div>
             <div className="w-full h-full flex flex-col gap-[0.55rem]">
