@@ -29,7 +29,7 @@ export default function Home() {
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/towers')
+    fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/towers')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -45,7 +45,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/blankspots')
+    fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/blankspots')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -61,7 +61,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/reportlength')
+    fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/reportlength')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -89,7 +89,7 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/kritik', {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/kritik', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

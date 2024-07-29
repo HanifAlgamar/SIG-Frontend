@@ -34,7 +34,7 @@ export const PoiMarkersMenara = (props: { pois: PoiMenara[] }) => {
     <>
       {props.pois.map((poi: PoiMenara, index) => (
         <AdvancedMarker key={index} position={{ lat: parseFloat(poi.latitude), lng: parseFloat(poi.longitude) }} onClick={handleMarkerClick(poi)}>
-          <Pin background={'#1D4ED8'} glyphColor={'#fff'} borderColor={'#fff'} />
+          <Pin background={poi.status == 'Aktif' ? '#1D4ED8' : '#eb3b3b'} glyphColor={'#fff'} borderColor={'#fff'} />
         </AdvancedMarker>
       ))}
       {selectedPoi && (

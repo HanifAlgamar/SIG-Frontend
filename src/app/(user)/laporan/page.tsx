@@ -109,7 +109,7 @@ export default function Page() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/report', {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

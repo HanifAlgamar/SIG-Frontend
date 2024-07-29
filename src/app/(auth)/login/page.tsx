@@ -12,15 +12,16 @@ export default function Page() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e:any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,8 +49,11 @@ export default function Page() {
     }
   };
 
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   return (
-    <div className="bg-[#FBD46D] h-screen w-full flex justify-center items-center">
+    <div className="h-screen w-full flex justify-center items-center">
       <div className="flex justify-center items-center">
         <div className="bg-white border w-96 px-4 py-5 rounded-md shadow-sm mx-auto">
           <div className="flex justify-center mb-5">
@@ -60,27 +64,20 @@ export default function Page() {
           <form onSubmit={handleLogin} className="flex flex-col gap-3">
             <div className="flex flex-col gap-3">
               <label htmlFor="username">Username</label>
-              <Input
-                type="text"
-                placeholder="Masukan username anda"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-              />
+              <Input type="text" placeholder="Masukan username anda" value={username} onChange={(e) => setUsername(e.target.value)} className="" />
             </div>
             <div className="flex flex-col gap-3">
               <label htmlFor="password">Password</label>
-              <Input
-                type="password"
-                placeholder="Masukan password anda"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full focus:border-[#FBD46D] focus:outline-none outline-none transition-all duration-150"
-              />
+              <Input type={showPassword ? 'text' : 'password'} placeholder="Masukan password anda" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full" />
+            </div>
+
+            <div className='flex items-center gap-3'>
+              <input type="checkbox" onChange={handleShowPassword} />
+              <p>Tampilkan Password</p>
             </div>
 
             <div>
-              <Button type="submit" className="w-full bg-[#002E5B]" disabled={loading}>
+              <Button type="submit" className="w-full bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md" disabled={loading}>
                 {loading ? 'Logging in...' : 'Login'}
               </Button>
             </div>

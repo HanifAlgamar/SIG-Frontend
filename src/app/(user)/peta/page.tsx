@@ -32,7 +32,7 @@ export default function Page() {
 
   const maps = useMap();
   useEffect(() => {
-    fetch('http://localhost:5000/api/towers')
+    fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/towers')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -48,7 +48,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/blankspots')
+    fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/blankspots')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
