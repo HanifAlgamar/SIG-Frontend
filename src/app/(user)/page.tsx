@@ -11,6 +11,8 @@ import { Textarea } from '@/components/ui/textarea';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import toast from 'react-hot-toast';
+import { Modal } from 'flowbite-react';
+import { TriangleAlert } from 'lucide-react';
 
 interface Laporan {
   count: string;
@@ -27,6 +29,15 @@ export default function Home() {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      setOpenModal(true);
+      sessionStorage.setItem('hasVisited', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/towers')
@@ -132,6 +143,24 @@ export default function Home() {
 
   return (
     <main>
+
+      <Modal show={openModal} size="xl" onClose={() => setOpenModal(false)} popup>
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <TriangleAlert className="mx-auto mb-4 h-14 w-14 text-yellow-300" />
+            <h3 className="mb-5 text-lg font-normal text-black">
+            Data yang digunakan dalam website ini hanya merupakan data simulasi (dummy) dan bukan data asli yang valid.
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={() => setOpenModal(false)} className='bg-gradient-to-br from-blue-500 to-blue-600 text-white'>
+                {"Setuju & Lanjutkan"}
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+      
       <div className="w-full h-screen bg-[url('/images/header.jpeg')] relative">
         <div className="bg-[#051D49] bg-opacity-80 h-full w-full text-white flex flex-col text-center items-center justify-center">
           <div className="px-4">
