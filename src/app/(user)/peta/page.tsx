@@ -154,7 +154,6 @@ export default function Page() {
               <Map
                 defaultZoom={13}
                 defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
-                onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                 mapId="semidi2"
                 style={{ width: '100%', height: '100vh' }}
                 zoomControlOptions={{ position: ControlPosition.TOP_RIGHT || null }}

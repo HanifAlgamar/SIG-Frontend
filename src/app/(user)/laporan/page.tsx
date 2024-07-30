@@ -5,14 +5,14 @@ import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, MapCameraChangedEvent, Marker } from '@vis.gl/react-google-maps';
 import toast from 'react-hot-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Modal } from 'flowbite-react';
 import { v4 as uuidv4 } from 'uuid';
 import { storage } from '@/firebase/firebase';
-import { DialogTitle } from '@radix-ui/react-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface FormData {
   nama: string;
@@ -48,6 +48,7 @@ export default function Page() {
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | undefined>('');
   const [selectOperator, setSelectOperator] = useState<string | null>();
+  const [openMaps, setOpenMaps] = useState(false);
   const inputImage = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,18 +211,20 @@ export default function Page() {
                   <Input type="text" name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="Latitude" className="w-full" required />
                   <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full" required />
                 </div>
-                <Dialog>
-                  <DialogTrigger className="w-full bg-gradient-to-br from-blue-500 to-blue-600 text-white py-2 rounded-md hover:bg-gradient-to-tr/ hover:bg-opacity-80 transition-colors duration-200">Lihat Peta</DialogTrigger>
-                  <DialogContent className="p-4">
-                    <DialogTitle>Pilih lokasi dengan drag pointer</DialogTitle>
+
+                <Button onClick={() => setOpenMaps(true)} className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600">
+                  Lihat Maps
+                </Button>
+                <Modal show={openMaps} onClose={() => setOpenMaps(false)} className="bg-black/50 mx-auto" size={'xl'}>
+                  <Modal.Header>Cari Lokasi</Modal.Header>
+                  <Modal.Body>
                     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
                       <Map
                         defaultZoom={13}
                         defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
                         onClick={onMapClick}
-                        onCameraChanged={(ev: MapCameraChangedEvent) => console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)}
                         mapId="semidi2"
-                        style={{ width: '100%', height: '500px' }}
+                        style={{ width: '100%', height: '480px' }}
                         mapTypeControl={false}
                         zoomControl={false}
                         fullscreenControl={false}
@@ -243,17 +246,16 @@ export default function Page() {
                             }
                           }}
                         />
+                        <MapControl position={ControlPosition.TOP}>
+                          <div className="autocomplete-control mt-14">
+                            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+                          </div>
+                        </MapControl>
+                        <MapHandler place={selectedPlace} setFormData={setFormData} />
                       </Map>
-                      <MapControl position={ControlPosition.TOP}>
-                        <div className="autocomplete-control z-50 mt-14">
-                          <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
-                        </div>
-                      </MapControl>
-                      <MapHandler place={selectedPlace} setFormData={setFormData} />
                     </APIProvider>
-                  </DialogContent>
-                </Dialog>
-               
+                  </Modal.Body>
+                </Modal>
               </div>
             </div>
             <div className="w-full h-full flex flex-col gap-[0.55rem]">
@@ -371,7 +373,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
 
   return (
     <div className="autocomplete-container">
-      <Input type="text" placeholder="Cari lokasi" className="w-96 shadow-sm" ref={inputRef} />
+      <Input type="text" placeholder="Cari lokasi" className="sm:w-96 w-72 shadow-sm" ref={inputRef} />
     </div>
   );
 };
