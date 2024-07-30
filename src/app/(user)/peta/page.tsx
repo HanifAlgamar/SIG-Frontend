@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { BlankSpotMarkers, PoiMarkersMenara } from '@/components/shared/poimarker';
-import PieChart from '@/components/shared/piechart';
 import { Layers2, X } from 'lucide-react';
 import { PoiMenara } from '@/components/shared/poimarker';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -165,13 +164,13 @@ export default function Page() {
                 {isCheckedMenara && <PoiMarkersMenara pois={filteredData} />}
                 {isCheckedBlankspot && <BlankSpotMarkers blankSpots={dataBlankspot} />}
                 <AdvancedMarker ref={markerRef} position={null} />
+                <MapControl position={ControlPosition.TOP}>
+                  <div className="autocomplete-control mt-6 max-md:mt-14">
+                    <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+                  </div>
+                </MapControl>
+                <MapHandler place={selectedPlace} marker={marker} />
               </Map>
-              <MapControl position={ControlPosition.TOP}>
-                <div className="autocomplete-control mt-6 max-md:mt-14">
-                  <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
-                </div>
-              </MapControl>
-              <MapHandler place={selectedPlace} marker={marker} />
             </APIProvider>
           </div>
         </div>
