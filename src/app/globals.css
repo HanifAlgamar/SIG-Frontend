@@ -130,3 +130,15 @@ body::-webkit-scrollbar-thumb {
 .hero {
   font-family: 'Montserrat';
 }
+
+.upload-image::-webkit-file-upload-button {
+  background-color: #348ae1 !important;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.upload-image::-webkit-file-upload-button:hover {
+  background-color: #2994ff !important;
+}

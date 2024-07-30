@@ -277,7 +277,7 @@ export default function Page() {
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="imgurl">Foto Lokasi</label>
-                <input name="imgurl" type='file' onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full bg-white border rounded-md file:bg-blue-600 file:text-white" ref={inputImage} required />
+                <input name="imgurl" type='file' onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full bg-white border rounded-md file:bg-blue-600 file:text-white upload-image" ref={inputImage} required />
               </div>
 
               <div className="flex flex-col gap-3">

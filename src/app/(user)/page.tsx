@@ -151,7 +151,7 @@ export default function Home() {
         <div className="flex justify-center mx-4 px-4">
           <div className="bg-white rounded-md max-w-4xl gap-4 w-full grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 items-center justify-center mx-auto shadow-sm px-4 py-4 absolute top-[90%]">
             <div>
-              <div className="p-4 gap-2 items-center w-full flex flex-col bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-md shadow-sm text-center">
+              <div className="p-4 gap-2 items-center sm:w-full w-80 flex flex-col bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-md shadow-sm text-center">
                 <div className="flex gap-3 items-center">
                   <RadioTower className="bg-white w-max h-max rounded-full p-2 md:p-4 text-slate-600" />
                   <p className="font-bold text-3xl md:text-5xl">{dataMenara.length}</p>
@@ -256,7 +256,7 @@ export default function Home() {
               <div className="flex flex-col gap-3 w-full">
                 <div>
                   <label htmlFor="nama">Nama</label>
-                  <Input className="mt-3" placeholder="Masukan nama lengkap anda" value={nama} onChange={(e) => setNama(e.target.value)} required />
+                  <Input className="mt-3" type='text' placeholder="Masukan nama lengkap anda" value={nama} onChange={(e) => setNama(e.target.value)} required />
                 </div>
                 <div>
                   <label htmlFor="email">Email</label>
