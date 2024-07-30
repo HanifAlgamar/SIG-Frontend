@@ -5,14 +5,14 @@ import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, MapCameraChangedEvent, Marker } from '@vis.gl/react-google-maps';
+import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, Marker } from '@vis.gl/react-google-maps';
 import toast from 'react-hot-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Modal } from 'flowbite-react';
+import { FileInput, Modal } from 'flowbite-react';
 import { v4 as uuidv4 } from 'uuid';
 import { storage } from '@/firebase/firebase';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { CustomFlowbiteTheme } from 'flowbite-react';
 
 interface FormData {
   nama: string;
@@ -26,6 +26,10 @@ interface FormData {
   imgurl: string;
   captcha: string;
 }
+
+const customTheme: CustomFlowbiteTheme = {
+  
+};
 
 export default function Page() {
   const [formData, setFormData] = useState<FormData>({
@@ -202,7 +206,7 @@ export default function Page() {
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="telepon">Telepon</label>
-                <Input type="tel" name="telepon" value={formData.telepon} onChange={handleInputChange} placeholder="Nomor telepon yang dapat dihubungi" className="w-full" required />
+                <Input type="text" inputMode='numeric' name="telepon" value={formData.telepon} onChange={handleInputChange} placeholder="Nomor telepon yang dapat dihubungi" className="w-full" required />
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="lokasi">Lokasi Blankspot</label>
@@ -215,18 +219,17 @@ export default function Page() {
                 <Button onClick={() => setOpenMaps(true)} className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600">
                   Lihat Maps
                 </Button>
-                <Modal show={openMaps} onClose={() => setOpenMaps(false)} className="bg-black/50 mx-auto" size={'xl'}>
+                <Modal show={openMaps} onClose={() => setOpenMaps(false)} className="bg-black/50 mx-auto" size={'5xl'}>
                   <Modal.Header>Cari Lokasi</Modal.Header>
                   <Modal.Body>
                     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
                       <Map
-                        defaultZoom={13}
+                        defaultZoom={10}
                         defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
                         onClick={onMapClick}
                         mapId="semidi2"
                         style={{ width: '100%', height: '480px' }}
                         mapTypeControl={false}
-                        zoomControl={false}
                         fullscreenControl={false}
                         streetViewControl={false}
                       >
@@ -273,8 +276,8 @@ export default function Page() {
                 </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <label htmlFor="imgurl">Gambar (Jpeg, Png)</label>
-                <Input type="file" name="imgurl" onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full" ref={inputImage} required />
+                <label htmlFor="imgurl">Foto Lokasi</label>
+                <input name="imgurl" type='file' onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full bg-white border rounded-md file:bg-blue-600 file:text-white" ref={inputImage} required />
               </div>
 
               <div className="flex flex-col gap-3">

@@ -152,7 +152,7 @@ export default function Page() {
           <div className="w-full">
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
               <Map
-                defaultZoom={13}
+                defaultZoom={11}
                 defaultCenter={{ lat: -8.583333, lng: 116.116667 }}
                 mapId="semidi2"
                 style={{ width: '100%', height: '100vh' }}

@@ -220,13 +220,13 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 mt-4">
+      <div className="max-w-5xl mx-auto px-4 mt-16">
         <div className="text-center">
           <h1 className="font-bold text-2xl md:text-3xl text-slate-700">FAQ</h1>
           <p className="text-slate-500">Temukan jawaban anda</p>
         </div>
 
-        <div className="mt-5 bg-white p-6 rounded-md shadow-sm">
+        <div className="mt-10 bg-white p-6 rounded-md shadow-sm">
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
               <AccordionTrigger>Apa itu Sistem Informasi Geografis (SIG) Menara Telekomunikasi dan Blankspot?</AccordionTrigger>
@@ -244,7 +244,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 mt-14 mb-10">
+      <div className="max-w-5xl mx-auto px-4 mt-16 mb-10">
         <div className="text-center">
           <h1 className="font-bold text-2xl md:text-3xl text-slate-700">Kritik dan Saran</h1>
           <p className="text-slate-500">Lengkapi data berikut untuk mengirimkan kritik dan saran</p>
