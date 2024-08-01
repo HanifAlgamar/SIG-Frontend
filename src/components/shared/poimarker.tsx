@@ -134,6 +134,7 @@ interface PolygonData {
     properties: {
       Lokasi: string;
       Operator: string;
+      Jumlah_Desa: number;
     };
   }[];
 }
@@ -143,6 +144,7 @@ interface SelectedPolygon {
   properties: {
     Lokasi: string;
     Operator: string;
+    Jumlah_Desa: number;
   };
 }
 
@@ -166,7 +168,7 @@ export const Blankspot: React.FC<BlankspotProps> = ({ isVisible }) => {
         strokeOpacity: 0.8,
         strokeWeight: 2,
         fillColor: '#FF0000',
-        fillOpacity: 0.35,
+        fillOpacity: 0.60,
       });
 
       polygon.addListener('click', (event: google.maps.PolyMouseEvent) => {
@@ -217,6 +219,7 @@ export const Blankspot: React.FC<BlankspotProps> = ({ isVisible }) => {
           <div>
             <h3>Lokasi: {selectedPolygon.properties.Lokasi}</h3>
             <p>Operator: {selectedPolygon.properties.Operator}</p>
+            <p>Jumlah Desa: {selectedPolygon.properties.Jumlah_Desa}</p>
           </div>
         </InfoWindow>
       )}

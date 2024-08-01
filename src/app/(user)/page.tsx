@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import toast from 'react-hot-toast';
+import { blankspot } from '../data/blankspots/blankspot';
 
 interface Laporan {
   count: string;
@@ -167,7 +168,7 @@ export default function Home() {
               <div className="p-4 gap-2 items-center w-full flex flex-col bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-md shadow-sm text-center">
                 <div className="flex gap-3 items-center">
                   <WifiOff className="bg-white w-max h-max rounded-full p-2 md:p-4 text-slate-600" />
-                  <p className="font-bold text-3xl md:text-5xl">{dataBlankspot.length}</p>
+                  <p className="font-bold text-3xl md:text-5xl">{blankspot.features.length}</p>
                 </div>
                 <div>
                   <p>Lokasi Blankspot</p>
