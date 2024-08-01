@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
-import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
-import { BlankSpotMarkers, PoiMarkersMenara } from '@/components/shared/poimarker';
+import { APIProvider, ControlPosition, MapControl, AdvancedMarker, Map, useMap, useMapsLibrary, useAdvancedMarkerRef } from '@vis.gl/react-google-maps';
+import { PoiMarkersMenara } from '@/components/shared/poimarker';
 import { Layers2, X } from 'lucide-react';
 import { PoiMenara } from '@/components/shared/poimarker';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Blankspot } from '@/components/shared/poimarker';
 
 export default function Page() {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
@@ -20,16 +21,17 @@ export default function Page() {
   const [dataTowers, setDataTowers] = useState<PoiMenara[]>([]);
   const [error, setError] = useState<Error | null>(null);
 
-  const [dataBlankspot, setDataBlankspot] = useState([]);
-
   const [isOpenMenu, setOpenMenu] = useState(true);
   const [isCheckedMenara, setCheckedMenara] = useState(true);
-  const [isCheckedBlankspot, setCheckedBlankspot] = useState(true);
+  const [isCheckedBlankspot, setCheckedBlankspot] = useState<boolean>(true);
 
   const [selectedOperators, setSelectedOperators] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
-  const maps = useMap();
+  const handleBlankspotChange = () => {
+    setCheckedBlankspot((prev) => !prev);
+  };
+
   useEffect(() => {
     fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/towers')
       .then((response) => {
@@ -40,22 +42,6 @@ export default function Page() {
       })
       .then((data: PoiMenara[]) => {
         setDataTowers(data);
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/blankspots')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setDataBlankspot(data);
       })
       .catch((error) => {
         setError(error);
@@ -74,10 +60,6 @@ export default function Page() {
     if (!isCheckedMenara) {
       setCheckedMenara(true);
     }
-  };
-
-  const handleBlankspotChange = () => {
-    setCheckedBlankspot((prev) => !prev);
   };
 
   const handleMenaraChange = () => {
@@ -161,7 +143,8 @@ export default function Page() {
                 mapTypeControlOptions={{ position: ControlPosition.TOP_RIGHT }}
               >
                 {isCheckedMenara && <PoiMarkersMenara pois={filteredData} />}
-                {isCheckedBlankspot && <BlankSpotMarkers blankSpots={dataBlankspot} />}
+                {isCheckedBlankspot && <Blankspot isVisible={isCheckedBlankspot} />}
+
                 <AdvancedMarker ref={markerRef} position={null} />
                 <MapControl position={ControlPosition.TOP}>
                   <div className="autocomplete-control mt-6 max-md:mt-14">
@@ -177,7 +160,6 @@ export default function Page() {
     </main>
   );
 }
-
 interface MapHandlerProps {
   place: google.maps.places.PlaceResult | null;
   marker: google.maps.marker.AdvancedMarkerElement | null;

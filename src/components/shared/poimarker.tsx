@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AdvancedMarker, Pin, InfoWindow, useMap } from '@vis.gl/react-google-maps';
+import { blankspot } from '@/app/data/blankspots/blankspot';
 
 export interface PoiMenara {
   key: string;
@@ -114,6 +115,108 @@ export const BlankSpotMarkers = (props: { blankSpots: BlankSpot[] }) => {
             >
               Lihat di Maps
             </button>
+          </div>
+        </InfoWindow>
+      )}
+    </>
+  );
+};
+
+interface BlankspotProps {
+  isVisible: boolean;
+}
+
+interface PolygonData {
+  features: {
+    geometry: {
+      coordinates: number[][][];
+    };
+    properties: {
+      Lokasi: string;
+      Operator: string;
+    };
+  }[];
+}
+
+interface SelectedPolygon {
+  position: google.maps.LatLng;
+  properties: {
+    Lokasi: string;
+    Operator: string;
+  };
+}
+
+export const Blankspot: React.FC<BlankspotProps> = ({ isVisible }) => {
+  const map = useMap();
+  const [polygons, setPolygons] = useState<google.maps.Polygon[]>([]);
+  const [selectedPolygon, setSelectedPolygon] = useState<SelectedPolygon | null>(null);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const newPolygons = (blankspot as PolygonData).features.map((feature) => {
+      const paths = feature.geometry.coordinates[0].map((coord) => ({
+        lat: coord[1],
+        lng: coord[0],
+      }));
+
+      const polygon = new google.maps.Polygon({
+        paths: paths,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+      });
+
+      polygon.addListener('click', (event: google.maps.PolyMouseEvent) => {
+        if (event.latLng) {
+          setSelectedPolygon({
+            position: event.latLng,
+            properties: feature.properties,
+          });
+        }
+      });
+
+      return polygon;
+    });
+
+    setPolygons(newPolygons);
+
+    return () => {
+      newPolygons.forEach((polygon) => polygon.setMap(null));
+    };
+  }, [map]);
+
+  useEffect(() => {
+    polygons.forEach((polygon) => {
+      polygon.setMap(isVisible ? map : null);
+    });
+
+    return () => {
+      polygons.forEach((polygon) => polygon.setMap(null));
+    };
+  }, [isVisible, map, polygons]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const listener = map.addListener('click', () => {
+      setSelectedPolygon(null);
+    });
+
+    return () => {
+      google.maps.event.removeListener(listener);
+    };
+  }, [map]);
+
+  return (
+    <>
+      {selectedPolygon && (
+        <InfoWindow position={selectedPolygon.position} onCloseClick={() => setSelectedPolygon(null)} headerContent={<span className="font-bold text-base">Informasi Blank Spot</span>}>
+          <div>
+            <h3>Lokasi: {selectedPolygon.properties.Lokasi}</h3>
+            <p>Operator: {selectedPolygon.properties.Operator}</p>
           </div>
         </InfoWindow>
       )}
