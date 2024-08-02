@@ -46,13 +46,26 @@ export const PoiMarkersMenara = (props: { pois: PoiMenara[] }) => {
             headerContent={<span className="font-bold text-base">Informasi Menara Telekomunikasi</span>}
           >
             <div>
-              <h3 className="font-bold">{selectedPoi.lokasi}</h3>
-              <p>Ketinggian: {selectedPoi.ketinggian}</p>
-              <p>Operator: {selectedPoi.operator}</p>
-              <p>Status: {selectedPoi.status}</p>
-              <p>Tipe: {selectedPoi.tipe}</p>
-              <p>Latitude: {selectedPoi.latitude}</p>
-              <p>Longitude: {selectedPoi.longitude}</p>
+              <h3> <span className="font-bold">Lokasi: </span>{selectedPoi.lokasi}</h3>
+              <p>
+                <span className="font-bold">Ketinggian: </span> {selectedPoi.ketinggian}
+              </p>
+              <p>
+                <span className="font-bold">Operator: </span> {selectedPoi.operator}
+              </p>
+              <p>
+                <span className="font-bold">Status: </span> {selectedPoi.status}
+              </p>
+              <p>
+                <span className="font-bold">Tipe: </span> {selectedPoi.tipe}
+              </p>
+              <p>
+                <span className="font-bold">Latitude: </span> {selectedPoi.latitude}
+              </p>
+              <p>
+                <span className="font-bold">Longitude: </span>
+                {selectedPoi.longitude}
+              </p>
               <button
                 onClick={() => window.open(`https://www.google.com/maps?q=${selectedPoi.latitude},${selectedPoi.longitude}`, '_blank')}
                 style={{ marginTop: '10px', padding: '5px 10px', background: '#1D4ED8', border: 'none', cursor: 'pointer', borderRadius: '4px', color: '#fff' }}
@@ -106,9 +119,15 @@ export const BlankSpotMarkers = (props: { blankSpots: BlankSpot[] }) => {
         <InfoWindow position={{ lat: parseFloat(selectedSpot.latitude), lng: parseFloat(selectedSpot.longitude) }} onCloseClick={() => setSelectedSpot(null)} headerContent={<span className="font-bold text-base">Informasi Blank Spot</span>}>
           <div>
             <h3 style={{ fontWeight: 'bold' }}>{selectedSpot.lokasi}</h3>
-            <p>Operator: {selectedSpot.operator}</p>
-            <p>Latitude: {selectedSpot.latitude}</p>
-            <p>Longitude: {selectedSpot.longitude}</p>
+            <p>
+              <span className="font-bold">Operator:</span> {selectedSpot.operator}
+            </p>
+            <p>
+              <span className="font-bold">Latitude:</span> {selectedSpot.latitude}
+            </p>
+            <p>
+              <span className="font-bo">Longitude:</span> {selectedSpot.longitude}
+            </p>
             <button
               onClick={() => window.open(`https://www.google.com/maps?q=${selectedSpot.latitude},${selectedSpot.longitude}`, '_blank')}
               style={{ marginTop: '10px', padding: '5px 10px', background: '#F97316', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
@@ -133,7 +152,6 @@ interface PolygonData {
     };
     properties: {
       Lokasi: string;
-      Operator: string;
       Jumlah_Desa: number;
     };
   }[];
@@ -143,7 +161,6 @@ interface SelectedPolygon {
   position: google.maps.LatLng;
   properties: {
     Lokasi: string;
-    Operator: string;
     Jumlah_Desa: number;
   };
 }
@@ -168,7 +185,7 @@ export const Blankspot: React.FC<BlankspotProps> = ({ isVisible }) => {
         strokeOpacity: 0.8,
         strokeWeight: 2,
         fillColor: '#FF0000',
-        fillOpacity: 0.60,
+        fillOpacity: 0.6,
       });
 
       polygon.addListener('click', (event: google.maps.PolyMouseEvent) => {
@@ -217,9 +234,12 @@ export const Blankspot: React.FC<BlankspotProps> = ({ isVisible }) => {
       {selectedPolygon && (
         <InfoWindow position={selectedPolygon.position} onCloseClick={() => setSelectedPolygon(null)} headerContent={<span className="font-bold text-base">Informasi Blank Spot</span>}>
           <div>
-            <h3>Lokasi: {selectedPolygon.properties.Lokasi}</h3>
-            <p>Operator: {selectedPolygon.properties.Operator}</p>
-            <p>Jumlah Desa: {selectedPolygon.properties.Jumlah_Desa}</p>
+            <h3>
+              <span className="font-bold">Lokasi</span>: {selectedPolygon.properties.Lokasi}
+            </h3>
+            <p>
+              <span className="font-bold">Jumlah Desa:</span> {selectedPolygon.properties.Jumlah_Desa}
+            </p>
           </div>
         </InfoWindow>
       )}

@@ -7,12 +7,10 @@ import { Button } from '@/components/ui/button';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { APIProvider, ControlPosition, MapControl, Map, useMap, useMapsLibrary, Marker } from '@vis.gl/react-google-maps';
 import toast from 'react-hot-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { FileInput, Modal } from 'flowbite-react';
+import { Modal } from 'flowbite-react';
 import { v4 as uuidv4 } from 'uuid';
 import { storage } from '@/firebase/firebase';
-import { CustomFlowbiteTheme } from 'flowbite-react';
 
 interface FormData {
   nama: string;
@@ -21,15 +19,10 @@ interface FormData {
   lokasi: string;
   latitude: string;
   longitude: string;
-  operator: string;
   keterangan: string;
   imgurl: string;
   captcha: string;
 }
-
-const customTheme: CustomFlowbiteTheme = {
-  
-};
 
 export default function Page() {
   const [formData, setFormData] = useState<FormData>({
@@ -39,7 +32,6 @@ export default function Page() {
     lokasi: '',
     latitude: '',
     longitude: '',
-    operator: '',
     keterangan: '',
     imgurl: '',
     captcha: '',
@@ -51,7 +43,6 @@ export default function Page() {
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | undefined>('');
-  const [selectOperator, setSelectOperator] = useState<string | null>();
   const [openMaps, setOpenMaps] = useState(false);
   const inputImage = useRef<HTMLInputElement>(null);
 
@@ -78,6 +69,7 @@ export default function Page() {
   const onChangeCaptcha = (value: string | null) => {
     setCaptchaValue(value);
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -107,56 +99,57 @@ export default function Page() {
       lokasi: formData.lokasi,
       latitude: formData.latitude,
       longitude: formData.longitude,
-      operator: selectOperator,
       keterangan: formData.keterangan,
       imgurl: imageDownloadUrl,
       captcha: captchaValue,
     };
 
-    try {
-      const response = await fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
-
-      if (response.ok) {
-        toast.success('Laporan blankspot berhasil dikirimkan');
-        setFormData({
-          nama: '',
-          email: '',
-          telepon: '',
-          lokasi: '',
-          latitude: '',
-          longitude: '',
-          operator: '',
-          keterangan: '',
-          imgurl: '',
-          captcha: '',
-        });
-
-        setSelectOperator('');
-        setCaptchaValue(null);
-        if (recaptchaRef.current) {
-          (recaptchaRef.current as ReCAPTCHA).reset();
-        }
-        setImageUrl('');
-        setFile(null);
-
-        if (inputImage.current) {
-          inputImage.current.value = '';
-        }
-      } else {
-        toast.error('Terjadi kesalahan saat mengirimkan laporan');
-      }
-    } catch (error) {
-      toast.error('Terjadi kesalahan saat mengirimkan laporan');
-      console.error('Error:', error);
-    }
+    toast.promise(submitReport(dataToSend), {
+      loading: 'Mengirim laporan...',
+      success: 'Laporan blankspot berhasil dikirimkan',
+      error: 'Terjadi kesalahan saat mengirimkan laporan',
+    });
 
     setIsSubmitting(false);
+  };
+
+  const submitReport = async (dataToSend: any) => {
+    const response = await fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataToSend),
+    });
+
+    if (!response.ok) {
+      throw new Error('Gagal mengirim laporan');
+    }
+
+    setFormData({
+      nama: '',
+      email: '',
+      telepon: '',
+      lokasi: '',
+      latitude: '',
+      longitude: '',
+      keterangan: '',
+      imgurl: '',
+      captcha: '',
+    });
+
+    setCaptchaValue(null);
+    if (recaptchaRef.current) {
+      (recaptchaRef.current as ReCAPTCHA).reset();
+    }
+    setImageUrl('');
+    setFile(null);
+
+    if (inputImage.current) {
+      inputImage.current.value = '';
+    }
+
+    return response.json();
   };
 
   const onMapClick = (e: any) => {
@@ -206,7 +199,7 @@ export default function Page() {
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="telepon">Telepon</label>
-                <Input type="text" inputMode='numeric' name="telepon" value={formData.telepon} onChange={handleInputChange} placeholder="Nomor telepon yang dapat dihubungi" className="w-full" required />
+                <Input type="text" inputMode="numeric" name="telepon" value={formData.telepon} onChange={handleInputChange} placeholder="Nomor telepon yang dapat dihubungi" className="w-full" required />
               </div>
               <div className="flex flex-col gap-3">
                 <label htmlFor="lokasi">Lokasi Blankspot</label>
@@ -216,7 +209,7 @@ export default function Page() {
                   <Input type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="Longitude" className="w-full" required />
                 </div>
 
-                <Button onClick={() => setOpenMaps(true)} className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600">
+                <Button onClick={() => setOpenMaps(true)} type="button" className="bg-gradient-to-br hover:bg-blue-400 w-full from-blue-500 to-blue-600">
                   Lihat Maps
                 </Button>
                 <Modal show={openMaps} onClose={() => setOpenMaps(false)} className="bg-black/50 mx-auto" size={'5xl'}>
@@ -263,26 +256,13 @@ export default function Page() {
             </div>
             <div className="w-full h-full flex flex-col gap-[0.55rem]">
               <div className="flex flex-col gap-3">
-                <label htmlFor="operator">Operator</label>
-                <Select required onValueChange={(value) => setSelectOperator(value)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Operator" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Telkomsel">Telkomsel</SelectItem>
-                    <SelectItem value="XL">XL</SelectItem>
-                    <SelectItem value="Indosat">Indosat</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
                 <label htmlFor="imgurl">Foto Lokasi</label>
-                <input name="imgurl" type='file' onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full bg-white border rounded-md file:bg-blue-600 file:text-white upload-image" ref={inputImage} required />
+                <input name="imgurl" type="file" onChange={handleFileSelect} placeholder="Foto lokasi blankspot" className="w-full bg-white border rounded-md file:bg-blue-600 file:text-white upload-image" ref={inputImage} required />
               </div>
 
               <div className="flex flex-col gap-3">
                 <label htmlFor="keterangan">Keterangan</label>
-                <Textarea name="keterangan" value={formData.keterangan} onChange={handleInputChange} placeholder="Masukkan keterangan" className="w-full resize-none" rows={11} required />
+                <Textarea name="keterangan" value={formData.keterangan} onChange={handleInputChange} placeholder="Masukkan keterangan" className="w-full resize-none" rows={12} required />
               </div>
             </div>
           </div>

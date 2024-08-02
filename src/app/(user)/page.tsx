@@ -28,7 +28,7 @@ export default function Home() {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
-  
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/towers')
@@ -90,7 +90,7 @@ export default function Home() {
 
     setIsSubmitting(true);
 
-    try {
+    const submitKritik = async () => {
       const response = await fetch(process.env.NEXT_PUBLIC_BASE_API_URL + '/api/kritik', {
         method: 'POST',
         headers: {
@@ -101,16 +101,15 @@ export default function Home() {
           email,
           telepon,
           pesan,
-          captcha:captchaValue
+          captcha: captchaValue,
         }),
       });
 
       if (!response.ok) {
-        toast.error('Kritik Gagal Dikirim, Mohon coba lagi nanti');
         throw new Error('Network response was not ok');
       }
 
-      toast.success('Pesan anda berhasil dikirimkan');
+      // Reset form
       setNama('');
       setEmail('');
       settelepon('');
@@ -119,8 +118,17 @@ export default function Home() {
       if (recaptchaRef.current) {
         (recaptchaRef.current as ReCAPTCHA).reset();
       }
+
+      return response.json();
+    };
+
+    try {
+      await toast.promise(submitKritik(), {
+        loading: 'Mengirim Kritik...',
+        success: 'Pesan anda berhasil dikirimkan',
+        error: 'Kritik Gagal Dikirim, Mohon coba lagi nanti',
+      });
     } catch (error) {
-      toast.error('Kritik Gagal Dikirim, Mohon coba lagi nanti');
       console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
@@ -134,7 +142,6 @@ export default function Home() {
 
   return (
     <main>
-      
       <div className="w-full h-screen bg-[url('/images/header.jpeg')] relative">
         <div className="bg-[#051D49] bg-opacity-80 h-full w-full text-white flex flex-col text-center items-center justify-center">
           <div className="px-4">
@@ -259,7 +266,7 @@ export default function Home() {
               <div className="flex flex-col gap-3 w-full">
                 <div>
                   <label htmlFor="nama">Nama</label>
-                  <Input className="mt-3" type='text' placeholder="Masukan nama lengkap anda" value={nama} onChange={(e) => setNama(e.target.value)} required />
+                  <Input className="mt-3" type="text" placeholder="Masukan nama lengkap anda" value={nama} onChange={(e) => setNama(e.target.value)} required />
                 </div>
                 <div>
                   <label htmlFor="email">Email</label>
@@ -278,7 +285,7 @@ export default function Home() {
             </div>
 
             <div className="mt-4">
-              <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''} onChange={(value) => setCaptchaValue(value)} ref={recaptchaRef}/>
+              <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''} onChange={(value) => setCaptchaValue(value)} ref={recaptchaRef} />
             </div>
 
             <div className="mt-4">

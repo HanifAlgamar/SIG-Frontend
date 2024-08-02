@@ -14,7 +14,6 @@ interface PolygonFeature {
 
 interface PolygonProperties {
   Lokasi: string;
-  Operator: string;
   Jumlah_Desa: number;
 }
 
@@ -25,7 +24,6 @@ export const blankspot: PolygonData = {
         "type": "Feature",
         "properties": {
           Lokasi: "Tanjung, 83350, Tanjung, Kabupaten Lombok Utara, Nusa Tenggara Barat, Indonesia",
-          "Operator": "Telkomsel",
           Jumlah_Desa: 2
         },
         "geometry": {
@@ -372,7 +370,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Wawo, Kabupaten Bima, Nusa Tenggara Barat, Indonesia',
-        Operator: 'XL',
         Jumlah_Desa: 1,
       },
       geometry: {
@@ -485,7 +482,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Wera, Kabupaten Bima, Nusa Tenggara Barat, Indonesia',
-        Operator: 'Telkomsel',
         Jumlah_Desa: 1,
       },
       geometry: {
@@ -549,7 +545,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Soromadi, Kabupaten Bima, Nusa Tenggara Barat, Indonesia',
-        Operator: 'Indosat',
         Jumlah_Desa: 2,
       },
       geometry: {
@@ -728,7 +723,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Woja, Kabupaten Dompu, Nusa Tenggara Barat, Indonesia',
-        Operator: 'Telkomsel',
         Jumlah_Desa: 1,
       },
       geometry: {
@@ -856,7 +850,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Sekongkang, Kabupaten Sumbawa Barat, Nusa Tenggara Barat, Indonesia',
-        Operator: 'XL Axiata',
         Jumlah_Desa: 1,
       },
       geometry: {
@@ -919,7 +912,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Poto Tano, Kabupaten Sumbawa Barat, Nusa Tenggara Barat, Indonesia',
-        Operator: 'Indosat Ooredoo',
         Jumlah_Desa: 1,
       },
       geometry: {
@@ -976,7 +968,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Orong Telu, Kabupaten Sumbawa, Nusa Tenggara Barat, Indonesia',
-        Operator: 'Telkomsel',
         Jumlah_Desa: 2,
       },
       geometry: {
@@ -1052,7 +1043,6 @@ export const blankspot: PolygonData = {
       type: 'Feature',
       properties: {
         Lokasi: 'Sanggar, Kabupaten Bima, Nusa Tenggara Barat, Indonesia',
-        Operator: 'Telkomsel',
         Jumlah_Desa: 1,
       },
       geometry: {
