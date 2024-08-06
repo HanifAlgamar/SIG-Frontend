@@ -76,4 +76,9 @@ const links = [
     path: '/laporan',
     label: 'Lapor Blankspot',
   },
+  {
+    link: '/dokumentasi',
+    path: '/dokumentasi',
+    label: 'Dokumentasi',
+  },
 ];
